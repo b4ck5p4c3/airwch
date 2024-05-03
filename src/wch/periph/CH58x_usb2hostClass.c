@@ -10,28 +10,28 @@
 
 #include "CH58x_common.h"
 #if DISK_LIB_ENABLE
-  #include "CHRV3UFI.H"
+  #include "CHRV3UFI.h"
 #endif
 
-/* ÉèÖÃHIDÉÏ´«ËÙÂÊ */
+/* ï¿½ï¿½ï¿½ï¿½HIDï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½ */
 __attribute__((aligned(4))) const uint8_t SetupSetU2HIDIdle[] = {0x21, HID_SET_IDLE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-/* »ñÈ¡HIDÉè±¸±¨±íÃèÊö·û */
+/* ï¿½ï¿½È¡HIDï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 __attribute__((aligned(4))) const uint8_t SetupGetU2HIDDevReport[] = {0x81, USB_GET_DESCRIPTOR, 0x00,
                                                                       USB_DESCR_TYP_REPORT, 0x00, 0x00, 0x41, 0x00};
-/* »ñÈ¡HUBÃèÊö·û */
+/* ï¿½ï¿½È¡HUBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 __attribute__((aligned(4))) const uint8_t SetupGetU2HubDescr[] = {HUB_GET_HUB_DESCRIPTOR, HUB_GET_DESCRIPTOR,
                                                                   0x00, USB_DESCR_TYP_HUB, 0x00, 0x00, sizeof(USB_HUB_DESCR), 0x00};
 
-__attribute__((aligned(4))) uint8_t U2Com_Buffer[128]; // ¶¨ÒåÓÃ»§ÁÙÊ±»º³åÇø,Ã¶¾ÙÊ±ÓÃÓÚ´¦ÀíÃèÊö·û,Ã¶¾Ù½áÊøÒ²¿ÉÒÔÓÃ×÷ÆÕÍ¨ÁÙÊ±»º³åÇø
+__attribute__((aligned(4))) uint8_t U2Com_Buffer[128]; // ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ã¶ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ã¶ï¿½Ù½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 /*********************************************************************
  * @fn      AnalyzeU2HidIntEndp
  *
- * @brief   ´ÓÃèÊö·ûÖÐ·ÖÎö³öHIDÖÐ¶Ï¶ËµãµÄµØÖ·,Èç¹ûHubPortIndexÊÇ0±£´æµ½ROOTHUB£¬Èç¹ûÊÇ·ÇÁãÖµÔò±£´æµ½HUBÏÂ½á¹¹Ìå
+ * @brief   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½HIDï¿½Ð¶Ï¶Ëµï¿½Äµï¿½Ö·,ï¿½ï¿½ï¿½HubPortIndexï¿½ï¿½0ï¿½ï¿½ï¿½æµ½ROOTHUBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Öµï¿½ò±£´æµ½HUBï¿½Â½á¹¹ï¿½ï¿½
  *
- * @param   buf     - ´ý·ÖÎöÊý¾Ý»º³åÇøµØÖ· HubPortIndex£º0±íÊ¾¸ùHUB£¬·Ç0±íÊ¾Íâ²¿HUBÏÂµÄ¶Ë¿ÚºÅ
+ * @param   buf     - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö· HubPortIndexï¿½ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½HUBï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê¾ï¿½â²¿HUBï¿½ÂµÄ¶Ë¿Úºï¿½
  *
- * @return  ¶ËµãÊý
+ * @return  ï¿½Ëµï¿½ï¿½ï¿½
  */
 uint8_t AnalyzeU2HidIntEndp(uint8_t *buf, uint8_t HubPortIndex)
 {
@@ -40,35 +40,35 @@ uint8_t AnalyzeU2HidIntEndp(uint8_t *buf, uint8_t HubPortIndex)
 
     if(HubPortIndex)
     {
-        memset(DevOnU2HubPort[HubPortIndex - 1].GpVar, 0, sizeof(DevOnU2HubPort[HubPortIndex - 1].GpVar)); //Çå¿ÕÊý×é
+        memset(DevOnU2HubPort[HubPortIndex - 1].GpVar, 0, sizeof(DevOnU2HubPort[HubPortIndex - 1].GpVar)); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
     else
     {
-        memset(ThisUsb2Dev.GpVar, 0, sizeof(ThisUsb2Dev.GpVar)); //Çå¿ÕÊý×é
+        memset(ThisUsb2Dev.GpVar, 0, sizeof(ThisUsb2Dev.GpVar)); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
-    for(i = 0; i < ((PUSB_CFG_DESCR)buf)->wTotalLength; i += l) // ËÑË÷ÖÐ¶Ï¶ËµãÃèÊö·û,Ìø¹ýÅäÖÃÃèÊö·ûºÍ½Ó¿ÚÃèÊö·û
+    for(i = 0; i < ((PUSB_CFG_DESCR)buf)->wTotalLength; i += l) // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¶Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
-        if(((PUSB_ENDP_DESCR)(buf + i))->bDescriptorType == USB_DESCR_TYP_ENDP                         // ÊÇ¶ËµãÃèÊö·û
-           && (((PUSB_ENDP_DESCR)(buf + i))->bmAttributes & USB_ENDP_TYPE_MASK) == USB_ENDP_TYPE_INTER // ÊÇÖÐ¶Ï¶Ëµã
-           && (((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_DIR_MASK))                    // ÊÇIN¶Ëµã
-        {                                                                                              // ±£´æÖÐ¶Ï¶ËµãµÄµØÖ·,Î»7ÓÃÓÚÍ¬²½±êÖ¾Î»,Çå0
+        if(((PUSB_ENDP_DESCR)(buf + i))->bDescriptorType == USB_DESCR_TYP_ENDP                         // ï¿½Ç¶Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+           && (((PUSB_ENDP_DESCR)(buf + i))->bmAttributes & USB_ENDP_TYPE_MASK) == USB_ENDP_TYPE_INTER // ï¿½ï¿½ï¿½Ð¶Ï¶Ëµï¿½
+           && (((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_DIR_MASK))                    // ï¿½ï¿½INï¿½Ëµï¿½
+        {                                                                                              // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¶Ëµï¿½Äµï¿½Ö·,Î»7ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Ö¾Î»,ï¿½ï¿½0
             if(HubPortIndex)
             {
                 DevOnU2HubPort[HubPortIndex - 1].GpVar[s] = ((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_ADDR_MASK;
             }
             else
             {
-                ThisUsb2Dev.GpVar[s] = ((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_ADDR_MASK; // ÖÐ¶Ï¶ËµãµÄµØÖ·£¬¿ÉÒÔ¸ù¾ÝÐèÒª±£´æwMaxPacketSizeºÍbInterval
+                ThisUsb2Dev.GpVar[s] = ((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_ADDR_MASK; // ï¿½Ð¶Ï¶Ëµï¿½Äµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½wMaxPacketSizeï¿½ï¿½bInterval
             }
             PRINT("%02x ", (uint16_t)ThisUsb2Dev.GpVar[s]);
             s++;
             if(s >= 4)
             {
-                break; //Ö»·ÖÎö4¸ö¶Ëµã
+                break; //Ö»ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½ï¿½Ëµï¿½
             }
         }
-        l = ((PUSB_ENDP_DESCR)(buf + i))->bLength; // µ±Ç°ÃèÊö·û³¤¶È,Ìø¹ý
+        l = ((PUSB_ENDP_DESCR)(buf + i))->bLength; // ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½
         if(l > 16)
         {
             break;
@@ -81,9 +81,9 @@ uint8_t AnalyzeU2HidIntEndp(uint8_t *buf, uint8_t HubPortIndex)
 /*********************************************************************
  * @fn      AnalyzeU2BulkEndp
  *
- * @brief   ·ÖÎö³öÅúÁ¿¶Ëµã,GpVar[0]¡¢GpVar[1]´æ·ÅÉÏ´«¶Ëµã¡£GpVar[2]¡¢GpVar[3]´æ·ÅÏÂ´«¶Ëµã
+ * @brief   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½,GpVar[0]ï¿½ï¿½GpVar[1]ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½Ëµã¡£GpVar[2]ï¿½ï¿½GpVar[3]ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½Ëµï¿½
  *
- * @param   buf     - ´ý·ÖÎöÊý¾Ý»º³åÇøµØÖ· HubPortIndex£º0±íÊ¾¸ùHUB£¬·Ç0±íÊ¾Íâ²¿HUBÏÂµÄ¶Ë¿ÚºÅ
+ * @param   buf     - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö· HubPortIndexï¿½ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½HUBï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê¾ï¿½â²¿HUBï¿½ÂµÄ¶Ë¿Úºï¿½
  *
  * @return  0
  */
@@ -95,17 +95,17 @@ uint8_t AnalyzeU2BulkEndp(uint8_t *buf, uint8_t HubPortIndex)
 
     if(HubPortIndex)
     {
-        memset(DevOnU2HubPort[HubPortIndex - 1].GpVar, 0, sizeof(DevOnU2HubPort[HubPortIndex - 1].GpVar)); //Çå¿ÕÊý×é
+        memset(DevOnU2HubPort[HubPortIndex - 1].GpVar, 0, sizeof(DevOnU2HubPort[HubPortIndex - 1].GpVar)); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
     else
     {
-        memset(ThisUsb2Dev.GpVar, 0, sizeof(ThisUsb2Dev.GpVar)); //Çå¿ÕÊý×é
+        memset(ThisUsb2Dev.GpVar, 0, sizeof(ThisUsb2Dev.GpVar)); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
-    for(i = 0; i < ((PUSB_CFG_DESCR)buf)->wTotalLength; i += l) // ËÑË÷ÖÐ¶Ï¶ËµãÃèÊö·û,Ìø¹ýÅäÖÃÃèÊö·ûºÍ½Ó¿ÚÃèÊö·û
+    for(i = 0; i < ((PUSB_CFG_DESCR)buf)->wTotalLength; i += l) // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¶Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
-        if((((PUSB_ENDP_DESCR)(buf + i))->bDescriptorType == USB_DESCR_TYP_ENDP)                         // ÊÇ¶ËµãÃèÊö·û
-           && ((((PUSB_ENDP_DESCR)(buf + i))->bmAttributes & USB_ENDP_TYPE_MASK) == USB_ENDP_TYPE_BULK)) // ÊÇÖÐ¶Ï¶Ëµã
+        if((((PUSB_ENDP_DESCR)(buf + i))->bDescriptorType == USB_DESCR_TYP_ENDP)                         // ï¿½Ç¶Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+           && ((((PUSB_ENDP_DESCR)(buf + i))->bmAttributes & USB_ENDP_TYPE_MASK) == USB_ENDP_TYPE_BULK)) // ï¿½ï¿½ï¿½Ð¶Ï¶Ëµï¿½
 
         {
             if(HubPortIndex)
@@ -140,7 +140,7 @@ uint8_t AnalyzeU2BulkEndp(uint8_t *buf, uint8_t HubPortIndex)
                 s2 = 3;
             }
         }
-        l = ((PUSB_ENDP_DESCR)(buf + i))->bLength; // µ±Ç°ÃèÊö·û³¤¶È,Ìø¹ý
+        l = ((PUSB_ENDP_DESCR)(buf + i))->bLength; // ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½
         if(l > 16)
         {
             break;
@@ -152,11 +152,11 @@ uint8_t AnalyzeU2BulkEndp(uint8_t *buf, uint8_t HubPortIndex)
 /*********************************************************************
  * @fn      InitRootU2Device
  *
- * @brief   ³õÊ¼»¯Ö¸¶¨ROOT-HUB¶Ë¿ÚµÄUSBÉè±¸
+ * @brief   ï¿½ï¿½Ê¼ï¿½ï¿½Ö¸ï¿½ï¿½ROOT-HUBï¿½Ë¿Úµï¿½USBï¿½è±¸
  *
  * @param   none
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t InitRootU2Device(void)
 {
@@ -164,42 +164,42 @@ uint8_t InitRootU2Device(void)
     uint8_t cfg, dv_cls, if_cls;
 
     PRINT("Reset U2 host port\n");
-    ResetRootU2HubPort(); // ¼ì²âµ½Éè±¸ºó,¸´Î»ÏàÓ¦¶Ë¿ÚµÄUSB×ÜÏß
+    ResetRootU2HubPort(); // ï¿½ï¿½âµ½ï¿½è±¸ï¿½ï¿½,ï¿½ï¿½Î»ï¿½ï¿½Ó¦ï¿½Ë¿Úµï¿½USBï¿½ï¿½ï¿½ï¿½
     for(i = 0, s = 0; i < 100; i++)
-    { // µÈ´ýUSBÉè±¸¸´Î»ºóÖØÐÂÁ¬½Ó,100mS³¬Ê±
+    { // ï¿½È´ï¿½USBï¿½è±¸ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,100mSï¿½ï¿½Ê±
         mDelaymS(1);
         if(EnableRootU2HubPort() == ERR_SUCCESS)
-        { // Ê¹ÄÜ¶Ë¿Ú
+        { // Ê¹ï¿½Ü¶Ë¿ï¿½
             i = 0;
             s++;
             if(s > 100)
-                break; // ÒÑ¾­ÎÈ¶¨Á¬½Ó100mS
+                break; // ï¿½Ñ¾ï¿½ï¿½È¶ï¿½ï¿½ï¿½ï¿½ï¿½100mS
         }
     }
     if(i)
-    { // ¸´Î»ºóÉè±¸Ã»ÓÐÁ¬½Ó
+    { // ï¿½ï¿½Î»ï¿½ï¿½ï¿½è±¸Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         DisableRootU2HubPort();
         PRINT("Disable U2 host port because of disconnect\n");
         return (ERR_USB_DISCON);
     }
-    SetUsb2Speed(ThisUsb2Dev.DeviceSpeed); // ÉèÖÃµ±Ç°USBËÙ¶È
+    SetUsb2Speed(ThisUsb2Dev.DeviceSpeed); // ï¿½ï¿½ï¿½Ãµï¿½Ç°USBï¿½Ù¶ï¿½
 
     PRINT("GetU2DevDescr: ");
-    s = CtrlGetU2DeviceDescr(); // »ñÈ¡Éè±¸ÃèÊö·û
+    s = CtrlGetU2DeviceDescr(); // ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if(s == ERR_SUCCESS)
     {
         for(i = 0; i < ((PUSB_SETUP_REQ)SetupGetU2DevDescr)->wLength; i++)
             PRINT("x%02X ", (uint16_t)(U2Com_Buffer[i]));
         PRINT("\n");
 
-        ThisUsb2Dev.DeviceVID = ((PUSB_DEV_DESCR)U2Com_Buffer)->idVendor; //±£´æVID PIDÐÅÏ¢
+        ThisUsb2Dev.DeviceVID = ((PUSB_DEV_DESCR)U2Com_Buffer)->idVendor; //ï¿½ï¿½ï¿½ï¿½VID PIDï¿½ï¿½Ï¢
         ThisUsb2Dev.DevicePID = ((PUSB_DEV_DESCR)U2Com_Buffer)->idProduct;
         dv_cls = ((PUSB_DEV_DESCR)U2Com_Buffer)->bDeviceClass;
 
         s = CtrlSetUsb2Address(((PUSB_SETUP_REQ)SetupSetUsb2Addr)->wValue);
         if(s == ERR_SUCCESS)
         {
-            ThisUsb2Dev.DeviceAddress = ((PUSB_SETUP_REQ)SetupSetUsb2Addr)->wValue; // ±£´æUSBµØÖ·
+            ThisUsb2Dev.DeviceAddress = ((PUSB_SETUP_REQ)SetupSetUsb2Addr)->wValue; // ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½Ö·
 
             PRINT("GetU2CfgDescr: ");
             s = CtrlGetU2ConfigDescr();
@@ -210,12 +210,12 @@ uint8_t InitRootU2Device(void)
                     PRINT("x%02X ", (uint16_t)(U2Com_Buffer[i]));
                 }
                 PRINT("\n");
-                /* ·ÖÎöÅäÖÃÃèÊö·û,»ñÈ¡¶ËµãÊý¾Ý/¸÷¶ËµãµØÖ·/¸÷¶Ëµã´óÐ¡µÈ,¸üÐÂ±äÁ¿endp_addrºÍendp_sizeµÈ */
+                /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½È¡ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½Ëµï¿½ï¿½Ö·/ï¿½ï¿½ï¿½Ëµï¿½ï¿½Ð¡ï¿½ï¿½,ï¿½ï¿½ï¿½Â±ï¿½ï¿½ï¿½endp_addrï¿½ï¿½endp_sizeï¿½ï¿½ */
                 cfg = ((PUSB_CFG_DESCR)U2Com_Buffer)->bConfigurationValue;
-                if_cls = ((PUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceClass; // ½Ó¿ÚÀà´úÂë
+                if_cls = ((PUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceClass; // ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
                 if((dv_cls == 0x00) && (if_cls == USB_DEV_CLASS_STORAGE))
-                { // ÊÇUSB´æ´¢ÀàÉè±¸,»ù±¾ÉÏÈ·ÈÏÊÇUÅÌ
+                { // ï¿½ï¿½USBï¿½æ´¢ï¿½ï¿½ï¿½è±¸,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½Uï¿½ï¿½
 #ifdef FOR_ROOT_UDISK_ONLY
                     CHRV3DiskStatus = DISK_USB_ADDR;
                     return (ERR_SUCCESS);
@@ -223,104 +223,104 @@ uint8_t InitRootU2Device(void)
                 else
                     return (ERR_USB_UNSUPPORT);
 #else
-                    s = CtrlSetUsb2Config(cfg); // ÉèÖÃUSBÉè±¸ÅäÖÃ
+                    s = CtrlSetUsb2Config(cfg); // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
                     if(s == ERR_SUCCESS)
                     {
                         ThisUsb2Dev.DeviceStatus = ROOT_DEV_SUCCESS;
                         ThisUsb2Dev.DeviceType = USB_DEV_CLASS_STORAGE;
                         PRINT("U2 USB-Disk Ready\n");
-                        SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+                        SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
                         return (ERR_SUCCESS);
                     }
                 }
                 else if((dv_cls == 0x00) && (if_cls == USB_DEV_CLASS_PRINTER) && ((PUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceSubClass == 0x01)
-                {                               // ÊÇ´òÓ¡»úÀàÉè±¸
-                    s = CtrlSetUsb2Config(cfg); // ÉèÖÃUSBÉè±¸ÅäÖÃ
+                {                               // ï¿½Ç´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½è±¸
+                    s = CtrlSetUsb2Config(cfg); // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
                     if(s == ERR_SUCCESS)
                     {
-                        //	Ðè±£´æ¶ËµãÐÅÏ¢ÒÔ±ãÖ÷³ÌÐò½øÐÐUSB´«Êä
+                        //	ï¿½è±£ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ï¢ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½
                         ThisUsb2Dev.DeviceStatus = ROOT_DEV_SUCCESS;
                         ThisUsb2Dev.DeviceType = USB_DEV_CLASS_PRINTER;
                         PRINT("U2 USB-Print Ready\n");
-                        SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+                        SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
                         return (ERR_SUCCESS);
                     }
                 }
                 else if((dv_cls == 0x00) && (if_cls == USB_DEV_CLASS_HID) && ((PUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceSubClass <= 0x01)
-                { // ÊÇHIDÀàÉè±¸,¼üÅÌ/Êó±êµÈ
-                    //  ´ÓÃèÊö·ûÖÐ·ÖÎö³öHIDÖÐ¶Ï¶ËµãµÄµØÖ·
-                    s = AnalyzeU2HidIntEndp(U2Com_Buffer, 0); // ´ÓÃèÊö·ûÖÐ·ÖÎö³öHIDÖÐ¶Ï¶ËµãµÄµØÖ·
+                { // ï¿½ï¿½HIDï¿½ï¿½ï¿½è±¸,ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½
+                    //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½HIDï¿½Ð¶Ï¶Ëµï¿½Äµï¿½Ö·
+                    s = AnalyzeU2HidIntEndp(U2Com_Buffer, 0); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½HIDï¿½Ð¶Ï¶Ëµï¿½Äµï¿½Ö·
                     PRINT("AnalyzeU2HidIntEndp %02x\n", (uint16_t)s);
-                    //  ±£´æÖÐ¶Ï¶ËµãµÄµØÖ·,Î»7ÓÃÓÚÍ¬²½±êÖ¾Î»,Çå0
+                    //  ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¶Ëµï¿½Äµï¿½Ö·,Î»7ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Ö¾Î»,ï¿½ï¿½0
                     if_cls = ((PUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceProtocol;
-                    s = CtrlSetUsb2Config(cfg); // ÉèÖÃUSBÉè±¸ÅäÖÃ
+                    s = CtrlSetUsb2Config(cfg); // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
                     if(s == ERR_SUCCESS)
                     {
                         //	    					Set_Idle( );
-                        //	Ðè±£´æ¶ËµãÐÅÏ¢ÒÔ±ãÖ÷³ÌÐò½øÐÐUSB´«Êä
+                        //	ï¿½è±£ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ï¢ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½
                         ThisUsb2Dev.DeviceStatus = ROOT_DEV_SUCCESS;
                         if(if_cls == 1)
                         {
                             ThisUsb2Dev.DeviceType = DEV_TYPE_KEYBOARD;
-                            //	½øÒ»²½³õÊ¼»¯,ÀýÈçÉè±¸¼üÅÌÖ¸Ê¾µÆLEDµÈ
+                            //	ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½Ö¸Ê¾ï¿½ï¿½LEDï¿½ï¿½
                             PRINT("U2 USB-Keyboard Ready\n");
-                            SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+                            SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
                             return (ERR_SUCCESS);
                         }
                         else if(if_cls == 2)
                         {
                             ThisUsb2Dev.DeviceType = DEV_TYPE_MOUSE;
-                            //	ÎªÁËÒÔºó²éÑ¯Êó±ê×´Ì¬,Ó¦¸Ã·ÖÎöÃèÊö·û,È¡µÃÖÐ¶Ï¶Ë¿ÚµÄµØÖ·,³¤¶ÈµÈÐÅÏ¢
+                            //	Îªï¿½ï¿½ï¿½Ôºï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½×´Ì¬,Ó¦ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,È¡ï¿½ï¿½ï¿½Ð¶Ï¶Ë¿ÚµÄµï¿½Ö·,ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½Ï¢
                             PRINT("U2 USB-Mouse Ready\n");
-                            SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+                            SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
                             return (ERR_SUCCESS);
                         }
                         s = ERR_USB_UNSUPPORT;
                     }
                 }
                 else if(dv_cls == USB_DEV_CLASS_HUB)
-                { // ÊÇHUBÀàÉè±¸,¼¯ÏßÆ÷µÈ
+                { // ï¿½ï¿½HUBï¿½ï¿½ï¿½è±¸,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                     s = CtrlGetU2HubDescr();
                     if(s == ERR_SUCCESS)
                     {
                         PRINT("Max Port:%02X ", (((PXUSB_HUB_DESCR)U2Com_Buffer)->bNbrPorts));
-                        ThisUsb2Dev.GpHUBPortNum = ((PXUSB_HUB_DESCR)U2Com_Buffer)->bNbrPorts; // ±£´æHUBµÄ¶Ë¿ÚÊýÁ¿
+                        ThisUsb2Dev.GpHUBPortNum = ((PXUSB_HUB_DESCR)U2Com_Buffer)->bNbrPorts; // ï¿½ï¿½ï¿½ï¿½HUBï¿½Ä¶Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½
                         if(ThisUsb2Dev.GpHUBPortNum > HUB_MAX_PORTS)
                         {
-                            ThisUsb2Dev.GpHUBPortNum = HUB_MAX_PORTS; // ÒòÎª¶¨Òå½á¹¹DevOnHubPortÊ±ÈËÎª¼Ù¶¨Ã¿¸öHUB²»³¬¹ýHUB_MAX_PORTS¸ö¶Ë¿Ú
+                            ThisUsb2Dev.GpHUBPortNum = HUB_MAX_PORTS; // ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½á¹¹DevOnHubPortÊ±ï¿½ï¿½Îªï¿½Ù¶ï¿½Ã¿ï¿½ï¿½HUBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HUB_MAX_PORTSï¿½ï¿½ï¿½Ë¿ï¿½
                         }
-                        s = CtrlSetUsb2Config(cfg); // ÉèÖÃUSBÉè±¸ÅäÖÃ
+                        s = CtrlSetUsb2Config(cfg); // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
                         if(s == ERR_SUCCESS)
                         {
                             ThisUsb2Dev.DeviceStatus = ROOT_DEV_SUCCESS;
                             ThisUsb2Dev.DeviceType = USB_DEV_CLASS_HUB;
-                            //Ðè±£´æ¶ËµãÐÅÏ¢ÒÔ±ãÖ÷³ÌÐò½øÐÐUSB´«Êä,±¾À´ÖÐ¶Ï¶Ëµã¿ÉÓÃÓÚHUBÊÂ¼þÍ¨Öª,µ«±¾³ÌÐòÊ¹ÓÃ²éÑ¯×´Ì¬¿ØÖÆ´«Êä´úÌæ
-                            //¸øHUB¸÷¶Ë¿ÚÉÏµç,²éÑ¯¸÷¶Ë¿Ú×´Ì¬,³õÊ¼»¯ÓÐÉè±¸Á¬½ÓµÄHUB¶Ë¿Ú,³õÊ¼»¯Éè±¸
-                            for(i = 1; i <= ThisUsb2Dev.GpHUBPortNum; i++) // ¸øHUB¸÷¶Ë¿Ú¶¼ÉÏµç
+                            //ï¿½è±£ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ï¢ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¶Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HUBï¿½Â¼ï¿½Í¨Öª,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã²ï¿½Ñ¯×´Ì¬ï¿½ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                            //ï¿½ï¿½HUBï¿½ï¿½ï¿½Ë¿ï¿½ï¿½Ïµï¿½,ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½Ë¿ï¿½×´Ì¬,ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½Óµï¿½HUBï¿½Ë¿ï¿½,ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½è±¸
+                            for(i = 1; i <= ThisUsb2Dev.GpHUBPortNum; i++) // ï¿½ï¿½HUBï¿½ï¿½ï¿½Ë¿Ú¶ï¿½ï¿½Ïµï¿½
                             {
-                                DevOnU2HubPort[i - 1].DeviceStatus = ROOT_DEV_DISCONNECT; // ÇåÍâ²¿HUB¶Ë¿ÚÉÏÉè±¸µÄ×´Ì¬
+                                DevOnU2HubPort[i - 1].DeviceStatus = ROOT_DEV_DISCONNECT; // ï¿½ï¿½ï¿½â²¿HUBï¿½Ë¿ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½×´Ì¬
                                 s = U2HubSetPortFeature(i, HUB_PORT_POWER);
                                 if(s != ERR_SUCCESS)
                                 {
-                                    PRINT("Ext-HUB Port_%1d# power on error\n", (uint16_t)i); // ¶Ë¿ÚÉÏµçÊ§°Ü
+                                    PRINT("Ext-HUB Port_%1d# power on error\n", (uint16_t)i); // ï¿½Ë¿ï¿½ï¿½Ïµï¿½Ê§ï¿½ï¿½
                                 }
                             }
                             PRINT("U2 USB-HUB Ready\n");
-                            SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+                            SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
                             return (ERR_SUCCESS);
                         }
                     }
                 }
                 else
-                {                               // ¿ÉÒÔ½øÒ»²½·ÖÎö
-                    s = CtrlSetUsb2Config(cfg); // ÉèÖÃUSBÉè±¸ÅäÖÃ
+                {                               // ï¿½ï¿½ï¿½Ô½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                    s = CtrlSetUsb2Config(cfg); // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
                     if(s == ERR_SUCCESS)
                     {
-                        //	Ðè±£´æ¶ËµãÐÅÏ¢ÒÔ±ãÖ÷³ÌÐò½øÐÐUSB´«Êä
+                        //	ï¿½è±£ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ï¢ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½
                         ThisUsb2Dev.DeviceStatus = ROOT_DEV_SUCCESS;
                         ThisUsb2Dev.DeviceType = DEV_TYPE_UNKNOW;
-                        SetUsb2Speed(1);      // Ä¬ÈÏÎªÈ«ËÙ
-                        return (ERR_SUCCESS); /* Î´ÖªÉè±¸³õÊ¼»¯³É¹¦ */
+                        SetUsb2Speed(1);      // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
+                        return (ERR_SUCCESS); /* Î´Öªï¿½è±¸ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½É¹ï¿½ */
                     }
                 }
 #endif
@@ -334,18 +334,18 @@ uint8_t InitRootU2Device(void)
 #else
     ThisUsb2Dev.DeviceStatus = ROOT_DEV_FAILED;
 #endif
-    SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+    SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
     return (s);
 }
 
 /*********************************************************************
  * @fn      InitU2DevOnHub
  *
- * @brief   ³õÊ¼»¯Ã¶¾ÙÍâ²¿HUBºóµÄ¶þ¼¶USBÉè±¸
+ * @brief   ï¿½ï¿½Ê¼ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½â²¿HUBï¿½ï¿½Ä¶ï¿½ï¿½ï¿½USBï¿½è±¸
  *
- * @param   HubPortIndex    - Ö¸¶¨Íâ²¿HUB
+ * @param   HubPortIndex    - Ö¸ï¿½ï¿½ï¿½â²¿HUB
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t InitU2DevOnHub(uint8_t HubPortIndex)
 {
@@ -356,26 +356,26 @@ uint8_t InitU2DevOnHub(uint8_t HubPortIndex)
     {
         return (ERR_USB_UNKNOWN);
     }
-    SelectU2HubPort(HubPortIndex); // Ñ¡Ôñ²Ù×÷Ö¸¶¨µÄROOT-HUB¶Ë¿ÚµÄÍâ²¿HUBµÄÖ¸¶¨¶Ë¿Ú,Ñ¡ÔñËÙ¶È
+    SelectU2HubPort(HubPortIndex); // Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ROOT-HUBï¿½Ë¿Úµï¿½ï¿½â²¿HUBï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ë¿ï¿½,Ñ¡ï¿½ï¿½ï¿½Ù¶ï¿½
     PRINT("GetDevDescr: ");
-    s = CtrlGetU2DeviceDescr(); // »ñÈ¡Éè±¸ÃèÊö·û
+    s = CtrlGetU2DeviceDescr(); // ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if(s != ERR_SUCCESS)
     {
         return (s);
     }
-    DevOnU2HubPort[HubPortIndex - 1].DeviceVID = ((uint16_t)((PUSB_DEV_DESCR)U2Com_Buffer)->idVendor); //±£´æVID PIDÐÅÏ¢
+    DevOnU2HubPort[HubPortIndex - 1].DeviceVID = ((uint16_t)((PUSB_DEV_DESCR)U2Com_Buffer)->idVendor); //ï¿½ï¿½ï¿½ï¿½VID PIDï¿½ï¿½Ï¢
     DevOnU2HubPort[HubPortIndex - 1].DevicePID = ((uint16_t)((PUSB_DEV_DESCR)U2Com_Buffer)->idProduct);
 
-    dv_cls = ((PUSB_DEV_DESCR)U2Com_Buffer)->bDeviceClass; // Éè±¸Àà´úÂë
-    cfg = (1 << 4) + HubPortIndex;                         // ¼ÆËã³öÒ»¸öUSBµØÖ·,±ÜÃâµØÖ·ÖØµþ
-    s = CtrlSetUsb2Address(cfg);                           // ÉèÖÃUSBÉè±¸µØÖ·
+    dv_cls = ((PUSB_DEV_DESCR)U2Com_Buffer)->bDeviceClass; // ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½
+    cfg = (1 << 4) + HubPortIndex;                         // ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½USBï¿½ï¿½Ö·,ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½Øµï¿½
+    s = CtrlSetUsb2Address(cfg);                           // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½Ö·
     if(s != ERR_SUCCESS)
     {
         return (s);
     }
-    DevOnU2HubPort[HubPortIndex - 1].DeviceAddress = cfg; // ±£´æ·ÖÅäµÄUSBµØÖ·
+    DevOnU2HubPort[HubPortIndex - 1].DeviceAddress = cfg; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½Ö·
     PRINT("GetCfgDescr: ");
-    s = CtrlGetU2ConfigDescr(); // »ñÈ¡ÅäÖÃÃèÊö·û
+    s = CtrlGetU2ConfigDescr(); // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if(s != ERR_SUCCESS)
     {
         return (s);
@@ -386,9 +386,9 @@ uint8_t InitU2DevOnHub(uint8_t HubPortIndex)
         PRINT("x%02X ", (uint16_t)(U2Com_Buffer[i]));
     }
     PRINT("\n");
-    /* ·ÖÎöÅäÖÃÃèÊö·û,»ñÈ¡¶ËµãÊý¾Ý/¸÷¶ËµãµØÖ·/¸÷¶Ëµã´óÐ¡µÈ,¸üÐÂ±äÁ¿endp_addrºÍendp_sizeµÈ */
-    if_cls = ((PXUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceClass; // ½Ó¿ÚÀà´úÂë
-    if(dv_cls == 0x00 && if_cls == USB_DEV_CLASS_STORAGE)                     // ÊÇUSB´æ´¢ÀàÉè±¸,»ù±¾ÉÏÈ·ÈÏÊÇUÅÌ
+    /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½È¡ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½Ëµï¿½ï¿½Ö·/ï¿½ï¿½ï¿½Ëµï¿½ï¿½Ð¡ï¿½ï¿½,ï¿½ï¿½ï¿½Â±ï¿½ï¿½ï¿½endp_addrï¿½ï¿½endp_sizeï¿½ï¿½ */
+    if_cls = ((PXUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceClass; // ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    if(dv_cls == 0x00 && if_cls == USB_DEV_CLASS_STORAGE)                     // ï¿½ï¿½USBï¿½æ´¢ï¿½ï¿½ï¿½è±¸,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½Uï¿½ï¿½
     {
         AnalyzeU2BulkEndp(U2Com_Buffer, HubPortIndex);
         for(i = 0; i != 4; i++)
@@ -396,28 +396,28 @@ uint8_t InitU2DevOnHub(uint8_t HubPortIndex)
             PRINT("%02x ", (uint16_t)DevOnU2HubPort[HubPortIndex - 1].GpVar[i]);
         }
         PRINT("\n");
-        s = CtrlSetUsb2Config(cfg); // ÉèÖÃUSBÉè±¸ÅäÖÃ
+        s = CtrlSetUsb2Config(cfg); // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
         if(s == ERR_SUCCESS)
         {
             DevOnU2HubPort[HubPortIndex - 1].DeviceStatus = ROOT_DEV_SUCCESS;
             DevOnU2HubPort[HubPortIndex - 1].DeviceType = USB_DEV_CLASS_STORAGE;
             PRINT("USB-Disk Ready\n");
-            SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+            SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
             return (ERR_SUCCESS);
         }
     }
-    else if((dv_cls == 0x00) && (if_cls == USB_DEV_CLASS_HID) && (((PXUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceSubClass <= 0x01)) // ÊÇHIDÀàÉè±¸,¼üÅÌ/Êó±êµÈ
+    else if((dv_cls == 0x00) && (if_cls == USB_DEV_CLASS_HID) && (((PXUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceSubClass <= 0x01)) // ï¿½ï¿½HIDï¿½ï¿½ï¿½è±¸,ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½
     {
         ifc = ((PXUSB_CFG_DESCR_LONG)U2Com_Buffer)->cfg_descr.bNumInterfaces;
-        s = AnalyzeU2HidIntEndp(U2Com_Buffer, HubPortIndex); // ´ÓÃèÊö·ûÖÐ·ÖÎö³öHIDÖÐ¶Ï¶ËµãµÄµØÖ·
+        s = AnalyzeU2HidIntEndp(U2Com_Buffer, HubPortIndex); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½HIDï¿½Ð¶Ï¶Ëµï¿½Äµï¿½Ö·
         PRINT("AnalyzeU2HidIntEndp %02x\n", (uint16_t)s);
         if_cls = ((PXUSB_CFG_DESCR_LONG)U2Com_Buffer)->itf_descr.bInterfaceProtocol;
-        s = CtrlSetUsb2Config(cfg); // ÉèÖÃUSBÉè±¸ÅäÖÃ
+        s = CtrlSetUsb2Config(cfg); // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
         if(s == ERR_SUCCESS)
         {
             for(dv_cls = 0; dv_cls < ifc; dv_cls++)
             {
-                s = CtrlGetU2HIDDeviceReport(dv_cls); //»ñÈ¡±¨±íÃèÊö·û
+                s = CtrlGetU2HIDDeviceReport(dv_cls); //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if(s == ERR_SUCCESS)
                 {
                     for(i = 0; i < 64; i++)
@@ -427,105 +427,105 @@ uint8_t InitU2DevOnHub(uint8_t HubPortIndex)
                     PRINT("\n");
                 }
             }
-            //Ðè±£´æ¶ËµãÐÅÏ¢ÒÔ±ãÖ÷³ÌÐò½øÐÐUSB´«Êä
+            //ï¿½è±£ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ï¢ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½
             DevOnU2HubPort[HubPortIndex - 1].DeviceStatus = ROOT_DEV_SUCCESS;
             if(if_cls == 1)
             {
                 DevOnU2HubPort[HubPortIndex - 1].DeviceType = DEV_TYPE_KEYBOARD;
-                //½øÒ»²½³õÊ¼»¯,ÀýÈçÉè±¸¼üÅÌÖ¸Ê¾µÆLEDµÈ
+                //ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½Ö¸Ê¾ï¿½ï¿½LEDï¿½ï¿½
                 if(ifc > 1)
                 {
                     PRINT("USB_DEV_CLASS_HID Ready\n");
-                    //                    DevOnU2HubPort[HubPortIndex - 1].DeviceType = USB_DEV_CLASS_HID; //¸´ºÏHIDÉè±¸
+                    //                    DevOnU2HubPort[HubPortIndex - 1].DeviceType = USB_DEV_CLASS_HID; //ï¿½ï¿½ï¿½ï¿½HIDï¿½è±¸
                 }
                 PRINT("USB-Keyboard Ready\n");
-                SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+                SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
 
                 return (ERR_SUCCESS);
             }
             else if(if_cls == 2)
             {
                 DevOnU2HubPort[HubPortIndex - 1].DeviceType = DEV_TYPE_MOUSE;
-                //ÎªÁËÒÔºó²éÑ¯Êó±ê×´Ì¬,Ó¦¸Ã·ÖÎöÃèÊö·û,È¡µÃÖÐ¶Ï¶Ë¿ÚµÄµØÖ·,³¤¶ÈµÈÐÅÏ¢
+                //Îªï¿½ï¿½ï¿½Ôºï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½×´Ì¬,Ó¦ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,È¡ï¿½ï¿½ï¿½Ð¶Ï¶Ë¿ÚµÄµï¿½Ö·,ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½Ï¢
                 if(ifc > 1)
                 {
                     PRINT("USB_DEV_CLASS_HID Ready\n");
-                    //                    DevOnU2HubPort[HubPortIndex - 1].DeviceType = USB_DEV_CLASS_HID; //¸´ºÏHIDÉè±¸
+                    //                    DevOnU2HubPort[HubPortIndex - 1].DeviceType = USB_DEV_CLASS_HID; //ï¿½ï¿½ï¿½ï¿½HIDï¿½è±¸
                 }
                 PRINT("USB-Mouse Ready\n");
-                SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+                SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
 
                 return (ERR_SUCCESS);
             }
             s = ERR_USB_UNSUPPORT;
         }
     }
-    else if(dv_cls == USB_DEV_CLASS_HUB) // ÊÇHUBÀàÉè±¸,¼¯ÏßÆ÷µÈ
+    else if(dv_cls == USB_DEV_CLASS_HUB) // ï¿½ï¿½HUBï¿½ï¿½ï¿½è±¸,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         DevOnU2HubPort[HubPortIndex - 1].DeviceType = USB_DEV_CLASS_HUB;
-        PRINT("This program don't support Level 2 HUB\n"); // ÐèÒªÖ§³Ö¶à¼¶HUB¼¶ÁªÇë²Î¿¼±¾³ÌÐò½øÐÐÀ©Õ¹
-        s = U2HubClearPortFeature(i, HUB_PORT_ENABLE);     // ½ûÖ¹HUB¶Ë¿Ú
+        PRINT("This program don't support Level 2 HUB\n"); // ï¿½ï¿½ÒªÖ§ï¿½Ö¶à¼¶HUBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹
+        s = U2HubClearPortFeature(i, HUB_PORT_ENABLE);     // ï¿½ï¿½Ö¹HUBï¿½Ë¿ï¿½
         if(s != ERR_SUCCESS)
         {
             return (s);
         }
         s = ERR_USB_UNSUPPORT;
     }
-    else //ÆäËûÉè±¸
+    else //ï¿½ï¿½ï¿½ï¿½ï¿½è±¸
     {
-        AnalyzeU2BulkEndp(U2Com_Buffer, HubPortIndex); //·ÖÎö³öÅúÁ¿¶Ëµã
+        AnalyzeU2BulkEndp(U2Com_Buffer, HubPortIndex); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½
         for(i = 0; i != 4; i++)
         {
             PRINT("%02x ", (uint16_t)DevOnU2HubPort[HubPortIndex - 1].GpVar[i]);
         }
         PRINT("\n");
-        s = CtrlSetUsb2Config(cfg); // ÉèÖÃUSBÉè±¸ÅäÖÃ
+        s = CtrlSetUsb2Config(cfg); // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
         if(s == ERR_SUCCESS)
         {
-            //Ðè±£´æ¶ËµãÐÅÏ¢ÒÔ±ãÖ÷³ÌÐò½øÐÐUSB´«Êä
+            //ï¿½è±£ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ï¢ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½
             DevOnU2HubPort[HubPortIndex - 1].DeviceStatus = ROOT_DEV_SUCCESS;
             DevOnU2HubPort[HubPortIndex - 1].DeviceType = dv_cls ? dv_cls : if_cls;
-            SetUsb2Speed(1);      // Ä¬ÈÏÎªÈ«ËÙ
-            return (ERR_SUCCESS); //Î´ÖªÉè±¸³õÊ¼»¯³É¹¦
+            SetUsb2Speed(1);      // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
+            return (ERR_SUCCESS); //Î´Öªï¿½è±¸ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½É¹ï¿½
         }
     }
     PRINT("InitDevOnHub Err = %02X\n", (uint16_t)s);
     DevOnU2HubPort[HubPortIndex - 1].DeviceStatus = ROOT_DEV_FAILED;
-    SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+    SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
     return (s);
 }
 
 /*********************************************************************
  * @fn      EnumU2HubPort
  *
- * @brief   Ã¶¾ÙÖ¸¶¨ROOT-HUB¶Ë¿ÚÉÏµÄÍâ²¿HUB¼¯ÏßÆ÷µÄ¸÷¸ö¶Ë¿Ú,¼ì²é¸÷¶Ë¿ÚÓÐÎÞÁ¬½Ó»òÒÆ³ýÊÂ¼þ²¢³õÊ¼»¯¶þ¼¶USBÉè±¸
+ * @brief   Ã¶ï¿½ï¿½Ö¸ï¿½ï¿½ROOT-HUBï¿½Ë¿ï¿½ï¿½Ïµï¿½ï¿½â²¿HUBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Æ³ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸
  *
- * @param   RootHubIndex    - ROOT_HUB0ºÍROOT_HUB1
+ * @param   RootHubIndex    - ROOT_HUB0ï¿½ï¿½ROOT_HUB1
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t EnumU2HubPort()
 {
     uint8_t i, s;
 
-    for(i = 1; i <= ThisUsb2Dev.GpHUBPortNum; i++) // ²éÑ¯¼¯ÏßÆ÷µÄ¶Ë¿ÚÊÇ·ñÓÐ±ä»¯
+    for(i = 1; i <= ThisUsb2Dev.GpHUBPortNum; i++) // ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶Ë¿ï¿½ï¿½Ç·ï¿½ï¿½Ð±ä»¯
     {
-        SelectU2HubPort(0);        // Ñ¡Ôñ²Ù×÷Ö¸¶¨µÄROOT-HUB¶Ë¿Ú,ÉèÖÃµ±Ç°USBËÙ¶ÈÒÔ¼°±»²Ù×÷Éè±¸µÄUSBµØÖ·
-        s = U2HubGetPortStatus(i); // »ñÈ¡¶Ë¿Ú×´Ì¬
+        SelectU2HubPort(0);        // Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ROOT-HUBï¿½Ë¿ï¿½,ï¿½ï¿½ï¿½Ãµï¿½Ç°USBï¿½Ù¶ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½USBï¿½ï¿½Ö·
+        s = U2HubGetPortStatus(i); // ï¿½ï¿½È¡ï¿½Ë¿ï¿½×´Ì¬
         if(s != ERR_SUCCESS)
         {
-            return (s); // ¿ÉÄÜÊÇ¸ÃHUB¶Ï¿ªÁË
+            return (s); // ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½HUBï¿½Ï¿ï¿½ï¿½ï¿½
         }
         if(((U2Com_Buffer[0] & (1 << (HUB_PORT_CONNECTION & 0x07))) && (U2Com_Buffer[2] & (1 << (HUB_C_PORT_CONNECTION & 0x07)))) || (U2Com_Buffer[2] == 0x10))
-        {                                                            // ·¢ÏÖÓÐÉè±¸Á¬½Ó
-            DevOnU2HubPort[i - 1].DeviceStatus = ROOT_DEV_CONNECTED; // ÓÐÉè±¸Á¬½Ó
+        {                                                            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+            DevOnU2HubPort[i - 1].DeviceStatus = ROOT_DEV_CONNECTED; // ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
             DevOnU2HubPort[i - 1].DeviceAddress = 0x00;
-            s = U2HubGetPortStatus(i); // »ñÈ¡¶Ë¿Ú×´Ì¬
+            s = U2HubGetPortStatus(i); // ï¿½ï¿½È¡ï¿½Ë¿ï¿½×´Ì¬
             if(s != ERR_SUCCESS)
             {
-                return (s); // ¿ÉÄÜÊÇ¸ÃHUB¶Ï¿ªÁË
+                return (s); // ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½HUBï¿½Ï¿ï¿½ï¿½ï¿½
             }
-            DevOnU2HubPort[i - 1].DeviceSpeed = U2Com_Buffer[1] & (1 << (HUB_PORT_LOW_SPEED & 0x07)) ? 0 : 1; // µÍËÙ»¹ÊÇÈ«ËÙ
+            DevOnU2HubPort[i - 1].DeviceSpeed = U2Com_Buffer[1] & (1 << (HUB_PORT_LOW_SPEED & 0x07)) ? 0 : 1; // ï¿½ï¿½ï¿½Ù»ï¿½ï¿½ï¿½È«ï¿½ï¿½
             if(DevOnU2HubPort[i - 1].DeviceSpeed)
             {
                 PRINT("Found full speed device on port %1d\n", (uint16_t)i);
@@ -534,97 +534,97 @@ uint8_t EnumU2HubPort()
             {
                 PRINT("Found low speed device on port %1d\n", (uint16_t)i);
             }
-            mDelaymS(200);                              // µÈ´ýÉè±¸ÉÏµçÎÈ¶¨
-            s = U2HubSetPortFeature(i, HUB_PORT_RESET); // ¶ÔÓÐÉè±¸Á¬½ÓµÄ¶Ë¿Ú¸´Î»
+            mDelaymS(200);                              // ï¿½È´ï¿½ï¿½è±¸ï¿½Ïµï¿½ï¿½È¶ï¿½
+            s = U2HubSetPortFeature(i, HUB_PORT_RESET); // ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ÓµÄ¶Ë¿Ú¸ï¿½Î»
             if(s != ERR_SUCCESS)
             {
-                return (s); // ¿ÉÄÜÊÇ¸ÃHUB¶Ï¿ªÁË
+                return (s); // ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½HUBï¿½Ï¿ï¿½ï¿½ï¿½
             }
             PRINT("Reset port and then wait in\n");
-            do // ²éÑ¯¸´Î»¶Ë¿Ú,Ö±µ½¸´Î»Íê³É,°ÑÍê³ÉºóµÄ×´Ì¬ÏÔÊ¾³öÀ´
+            do // ï¿½ï¿½Ñ¯ï¿½ï¿½Î»ï¿½Ë¿ï¿½,Ö±ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Éºï¿½ï¿½×´Ì¬ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
             {
                 mDelaymS(1);
                 s = U2HubGetPortStatus(i);
                 if(s != ERR_SUCCESS)
                 {
-                    return (s); // ¿ÉÄÜÊÇ¸ÃHUB¶Ï¿ªÁË
+                    return (s); // ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½HUBï¿½Ï¿ï¿½ï¿½ï¿½
                 }
-            } while(U2Com_Buffer[0] & (1 << (HUB_PORT_RESET & 0x07))); // ¶Ë¿ÚÕýÔÚ¸´Î»ÔòµÈ´ý
+            } while(U2Com_Buffer[0] & (1 << (HUB_PORT_RESET & 0x07))); // ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½Î»ï¿½ï¿½È´ï¿½
             mDelaymS(100);
-            s = U2HubClearPortFeature(i, HUB_C_PORT_RESET);      // Çå³ý¸´Î»Íê³É±êÖ¾
-                                                                 //             s = U2HubSetPortFeature( i, HUB_PORT_ENABLE );                              // ÆôÓÃHUB¶Ë¿Ú
-            s = U2HubClearPortFeature(i, HUB_C_PORT_CONNECTION); // Çå³ýÁ¬½Ó»òÒÆ³ý±ä»¯±êÖ¾
+            s = U2HubClearPortFeature(i, HUB_C_PORT_RESET);      // ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½É±ï¿½Ö¾
+                                                                 //             s = U2HubSetPortFeature( i, HUB_PORT_ENABLE );                              // ï¿½ï¿½ï¿½ï¿½HUBï¿½Ë¿ï¿½
+            s = U2HubClearPortFeature(i, HUB_C_PORT_CONNECTION); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Æ³ï¿½ï¿½ä»¯ï¿½ï¿½Ö¾
             if(s != ERR_SUCCESS)
             {
                 return (s);
             }
-            s = U2HubGetPortStatus(i); // ÔÙ¶ÁÈ¡×´Ì¬,¸´²éÉè±¸ÊÇ·ñ»¹ÔÚ
+            s = U2HubGetPortStatus(i); // ï¿½Ù¶ï¿½È¡×´Ì¬,ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Ç·ï¿½ï¿½ï¿½
             if(s != ERR_SUCCESS)
             {
                 return (s);
             }
             if((U2Com_Buffer[0] & (1 << (HUB_PORT_CONNECTION & 0x07))) == 0)
             {
-                DevOnU2HubPort[i - 1].DeviceStatus = ROOT_DEV_DISCONNECT; // Éè±¸²»ÔÚÁË
+                DevOnU2HubPort[i - 1].DeviceStatus = ROOT_DEV_DISCONNECT; // ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             }
-            s = InitU2DevOnHub(i); // ³õÊ¼»¯¶þ¼¶USBÉè±¸
+            s = InitU2DevOnHub(i); // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸
             if(s != ERR_SUCCESS)
             {
                 return (s);
             }
-            SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+            SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
         }
-        else if(U2Com_Buffer[2] & (1 << (HUB_C_PORT_ENABLE & 0x07))) // Éè±¸Á¬½Ó³ö´í
+        else if(U2Com_Buffer[2] & (1 << (HUB_C_PORT_ENABLE & 0x07))) // ï¿½è±¸ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½
         {
-            U2HubClearPortFeature(i, HUB_C_PORT_ENABLE); // Çå³ýÁ¬½Ó´íÎó±êÖ¾
+            U2HubClearPortFeature(i, HUB_C_PORT_ENABLE); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½ï¿½Ö¾
             PRINT("Device on port error\n");
-            s = U2HubSetPortFeature(i, HUB_PORT_RESET); // ¶ÔÓÐÉè±¸Á¬½ÓµÄ¶Ë¿Ú¸´Î»
+            s = U2HubSetPortFeature(i, HUB_PORT_RESET); // ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ÓµÄ¶Ë¿Ú¸ï¿½Î»
             if(s != ERR_SUCCESS)
-                return (s); // ¿ÉÄÜÊÇ¸ÃHUB¶Ï¿ªÁË
-            do              // ²éÑ¯¸´Î»¶Ë¿Ú,Ö±µ½¸´Î»Íê³É,°ÑÍê³ÉºóµÄ×´Ì¬ÏÔÊ¾³öÀ´
+                return (s); // ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½HUBï¿½Ï¿ï¿½ï¿½ï¿½
+            do              // ï¿½ï¿½Ñ¯ï¿½ï¿½Î»ï¿½Ë¿ï¿½,Ö±ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Éºï¿½ï¿½×´Ì¬ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
             {
                 mDelaymS(1);
                 s = U2HubGetPortStatus(i);
                 if(s != ERR_SUCCESS)
-                    return (s);                                        // ¿ÉÄÜÊÇ¸ÃHUB¶Ï¿ªÁË
-            } while(U2Com_Buffer[0] & (1 << (HUB_PORT_RESET & 0x07))); // ¶Ë¿ÚÕýÔÚ¸´Î»ÔòµÈ´ý
+                    return (s);                                        // ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½HUBï¿½Ï¿ï¿½ï¿½ï¿½
+            } while(U2Com_Buffer[0] & (1 << (HUB_PORT_RESET & 0x07))); // ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½Î»ï¿½ï¿½È´ï¿½
         }
-        else if((U2Com_Buffer[0] & (1 << (HUB_PORT_CONNECTION & 0x07))) == 0) // Éè±¸ÒÑ¾­¶Ï¿ª
+        else if((U2Com_Buffer[0] & (1 << (HUB_PORT_CONNECTION & 0x07))) == 0) // ï¿½è±¸ï¿½Ñ¾ï¿½ï¿½Ï¿ï¿½
         {
             if(DevOnU2HubPort[i - 1].DeviceStatus >= ROOT_DEV_CONNECTED)
             {
                 PRINT("Device on port %1d removed\n", (uint16_t)i);
             }
-            DevOnU2HubPort[i - 1].DeviceStatus = ROOT_DEV_DISCONNECT; // ÓÐÉè±¸Á¬½Ó
+            DevOnU2HubPort[i - 1].DeviceStatus = ROOT_DEV_DISCONNECT; // ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
             if(U2Com_Buffer[2] & (1 << (HUB_C_PORT_CONNECTION & 0x07)))
             {
-                U2HubClearPortFeature(i, HUB_C_PORT_CONNECTION); // Çå³ýÒÆ³ý±ä»¯±êÖ¾
+                U2HubClearPortFeature(i, HUB_C_PORT_CONNECTION); // ï¿½ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ä»¯ï¿½ï¿½Ö¾
             }
         }
     }
-    return (ERR_SUCCESS); // ·µ»Ø²Ù×÷³É¹¦
+    return (ERR_SUCCESS); // ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½É¹ï¿½
 }
 
 /*********************************************************************
  * @fn      EnumAllU2HubPort
  *
- * @brief   Ã¶¾ÙËùÓÐROOT-HUB¶Ë¿ÚÏÂÍâ²¿HUBºóµÄ¶þ¼¶USBÉè±¸
+ * @brief   Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ROOT-HUBï¿½Ë¿ï¿½ï¿½ï¿½ï¿½â²¿HUBï¿½ï¿½Ä¶ï¿½ï¿½ï¿½USBï¿½è±¸
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t EnumAllU2HubPort(void)
 {
     uint8_t s;
 
-    if((ThisUsb2Dev.DeviceStatus >= ROOT_DEV_SUCCESS) && (ThisUsb2Dev.DeviceType == USB_DEV_CLASS_HUB)) // HUBÃ¶¾Ù³É¹¦
+    if((ThisUsb2Dev.DeviceStatus >= ROOT_DEV_SUCCESS) && (ThisUsb2Dev.DeviceType == USB_DEV_CLASS_HUB)) // HUBÃ¶ï¿½Ù³É¹ï¿½
     {
-        SelectU2HubPort(0);  // Ñ¡Ôñ²Ù×÷Ö¸¶¨µÄROOT-HUB¶Ë¿Ú,ÉèÖÃµ±Ç°USBËÙ¶ÈÒÔ¼°±»²Ù×÷Éè±¸µÄUSBµØÖ·
-        s = EnumU2HubPort(); // Ã¶¾ÙÖ¸¶¨ROOT-HUB¶Ë¿ÚÉÏµÄÍâ²¿HUB¼¯ÏßÆ÷µÄ¸÷¸ö¶Ë¿Ú,¼ì²é¸÷¶Ë¿ÚÓÐÎÞÁ¬½Ó»òÒÆ³ýÊÂ¼þ
-        if(s != ERR_SUCCESS) // ¿ÉÄÜÊÇHUB¶Ï¿ªÁË
+        SelectU2HubPort(0);  // Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ROOT-HUBï¿½Ë¿ï¿½,ï¿½ï¿½ï¿½Ãµï¿½Ç°USBï¿½Ù¶ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½USBï¿½ï¿½Ö·
+        s = EnumU2HubPort(); // Ã¶ï¿½ï¿½Ö¸ï¿½ï¿½ROOT-HUBï¿½Ë¿ï¿½ï¿½Ïµï¿½ï¿½â²¿HUBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Æ³ï¿½ï¿½Â¼ï¿½
+        if(s != ERR_SUCCESS) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HUBï¿½Ï¿ï¿½ï¿½ï¿½
         {
             PRINT("EnumAllHubPort err = %02X\n", (uint16_t)s);
         }
-        SetUsb2Speed(1); // Ä¬ÈÏÎªÈ«ËÙ
+        SetUsb2Speed(1); // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
     }
     return (ERR_SUCCESS);
 }
@@ -632,32 +632,32 @@ uint8_t EnumAllU2HubPort(void)
 /*********************************************************************
  * @fn      U2SearchTypeDevice
  *
- * @brief   ÔÚROOT-HUBÒÔ¼°Íâ²¿HUB¸÷¶Ë¿ÚÉÏËÑË÷Ö¸¶¨ÀàÐÍµÄÉè±¸ËùÔÚµÄ¶Ë¿ÚºÅ,Êä³ö¶Ë¿ÚºÅÎª0xFFFFÔòÎ´ËÑË÷µ½.
- *          µ±È»Ò²¿ÉÒÔ¸ù¾ÝUSBµÄ³§ÉÌVID²úÆ·PID½øÐÐËÑË÷(ÊÂÏÈÒª¼ÇÂ¼¸÷Éè±¸µÄVIDºÍPID),ÒÔ¼°Ö¸¶¨ËÑË÷ÐòºÅ
+ * @brief   ï¿½ï¿½ROOT-HUBï¿½Ô¼ï¿½ï¿½â²¿HUBï¿½ï¿½ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ï¿½è±¸ï¿½ï¿½ï¿½ÚµÄ¶Ë¿Úºï¿½,ï¿½ï¿½ï¿½ï¿½Ë¿Úºï¿½Îª0xFFFFï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+ *          ï¿½ï¿½È»Ò²ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½USBï¿½Ä³ï¿½ï¿½ï¿½VIDï¿½ï¿½Æ·PIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Â¼ï¿½ï¿½ï¿½è±¸ï¿½ï¿½VIDï¿½ï¿½PID),ï¿½Ô¼ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  *
- * @param   type    - ËÑË÷µÄÉè±¸ÀàÐÍ
+ * @param   type    - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
  *
- * @return  Êä³ö¸ß8Î»ÎªROOT-HUB¶Ë¿ÚºÅ,µÍ8Î»ÎªÍâ²¿HUBµÄ¶Ë¿ÚºÅ,µÍ8Î»Îª0ÔòÉè±¸Ö±½ÓÔÚROOT-HUB¶Ë¿ÚÉÏ
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½8Î»ÎªROOT-HUBï¿½Ë¿Úºï¿½,ï¿½ï¿½8Î»Îªï¿½â²¿HUBï¿½Ä¶Ë¿Úºï¿½,ï¿½ï¿½8Î»Îª0ï¿½ï¿½ï¿½è±¸Ö±ï¿½ï¿½ï¿½ï¿½ROOT-HUBï¿½Ë¿ï¿½ï¿½ï¿½
  */
 uint16_t U2SearchTypeDevice(uint8_t type)
 {
-    uint8_t RootHubIndex; //CH554Ö»ÓÐÒ»¸öUSB¿Ú,RootHubIndex = 0,Ö»Ðè¿´·µ»ØÖµµÄµÍ°ËÎ»¼´¿É
+    uint8_t RootHubIndex; //CH554Ö»ï¿½ï¿½Ò»ï¿½ï¿½USBï¿½ï¿½,RootHubIndex = 0,Ö»ï¿½è¿´ï¿½ï¿½ï¿½ï¿½Öµï¿½ÄµÍ°ï¿½Î»ï¿½ï¿½ï¿½ï¿½
     uint8_t HubPortIndex;
 
     RootHubIndex = 0;
-    if((ThisUsb2Dev.DeviceType == USB_DEV_CLASS_HUB) && (ThisUsb2Dev.DeviceStatus >= ROOT_DEV_SUCCESS)) // Íâ²¿¼¯ÏßÆ÷HUBÇÒÃ¶¾Ù³É¹¦
+    if((ThisUsb2Dev.DeviceType == USB_DEV_CLASS_HUB) && (ThisUsb2Dev.DeviceStatus >= ROOT_DEV_SUCCESS)) // ï¿½â²¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HUBï¿½ï¿½Ã¶ï¿½Ù³É¹ï¿½
     {
-        for(HubPortIndex = 1; HubPortIndex <= ThisUsb2Dev.GpHUBPortNum; HubPortIndex++) // ËÑË÷Íâ²¿HUBµÄ¸÷¸ö¶Ë¿Ú
+        for(HubPortIndex = 1; HubPortIndex <= ThisUsb2Dev.GpHUBPortNum; HubPortIndex++) // ï¿½ï¿½ï¿½ï¿½ï¿½â²¿HUBï¿½Ä¸ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½
         {
             if(DevOnU2HubPort[HubPortIndex - 1].DeviceType == type && DevOnU2HubPort[HubPortIndex - 1].DeviceStatus >= ROOT_DEV_SUCCESS)
             {
-                return (((uint16_t)RootHubIndex << 8) | HubPortIndex); // ÀàÐÍÆ¥ÅäÇÒÃ¶¾Ù³É¹¦
+                return (((uint16_t)RootHubIndex << 8) | HubPortIndex); // ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½Ù³É¹ï¿½
             }
         }
     }
     if((ThisUsb2Dev.DeviceType == type) && (ThisUsb2Dev.DeviceStatus >= ROOT_DEV_SUCCESS))
     {
-        return ((uint16_t)RootHubIndex << 8); // ÀàÐÍÆ¥ÅäÇÒÃ¶¾Ù³É¹¦,ÔÚROOT-HUB¶Ë¿ÚÉÏ
+        return ((uint16_t)RootHubIndex << 8); // ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½Ù³É¹ï¿½,ï¿½ï¿½ROOT-HUBï¿½Ë¿ï¿½ï¿½ï¿½
     }
 
     return (0xFFFF);
@@ -666,11 +666,11 @@ uint16_t U2SearchTypeDevice(uint8_t type)
 /*********************************************************************
  * @fn      U2SETorOFFNumLock
  *
- * @brief   NumLockµÄµãµÆÅÐ¶Ï
+ * @brief   NumLockï¿½Äµï¿½ï¿½ï¿½Ð¶ï¿½
  *
- * @param   buf     - µãµÆ¼üÖµ
+ * @param   buf     - ï¿½ï¿½Æ¼ï¿½Öµ
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t U2SETorOFFNumLock(uint8_t *buf)
 {
@@ -682,7 +682,7 @@ uint8_t U2SETorOFFNumLock(uint8_t *buf)
         {
             ((uint8_t *)pU2SetupReq)[s] = tmp[s];
         }
-        s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ÐÐ¿ØÖÆ´«Êä
+        s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
         if(s != ERR_SUCCESS)
         {
             return (s);
@@ -694,11 +694,11 @@ uint8_t U2SETorOFFNumLock(uint8_t *buf)
 /*********************************************************************
  * @fn      CtrlGetU2HIDDeviceReport
  *
- * @brief   »ñÈ¡HIDÉè±¸±¨±íÃèÊö·û,·µ»ØÔÚTxBufferÖÐ
+ * @brief   ï¿½ï¿½È¡HIDï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TxBufferï¿½ï¿½
  *
  * @param   none
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t CtrlGetU2HIDDeviceReport(uint8_t infc)
 {
@@ -707,7 +707,7 @@ uint8_t CtrlGetU2HIDDeviceReport(uint8_t infc)
 
     CopyU2SetupReqPkg((uint8_t *)SetupSetU2HIDIdle);
     pU2SetupReq->wIndex = infc;
-    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ÐÐ¿ØÖÆ´«Êä
+    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
     if(s != ERR_SUCCESS)
     {
         return (s);
@@ -715,7 +715,7 @@ uint8_t CtrlGetU2HIDDeviceReport(uint8_t infc)
 
     CopyU2SetupReqPkg((uint8_t *)SetupGetU2HIDDevReport);
     pU2SetupReq->wIndex = infc;
-    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ÐÐ¿ØÖÆ´«Êä
+    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
     if(s != ERR_SUCCESS)
     {
         return (s);
@@ -727,11 +727,11 @@ uint8_t CtrlGetU2HIDDeviceReport(uint8_t infc)
 /*********************************************************************
  * @fn      CtrlGetU2HubDescr
  *
- * @brief   »ñÈ¡HUBÃèÊö·û,·µ»ØÔÚCom_BufferÖÐ
+ * @brief   ï¿½ï¿½È¡HUBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Com_Bufferï¿½ï¿½
  *
  * @param   none
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t CtrlGetU2HubDescr(void)
 {
@@ -739,27 +739,27 @@ uint8_t CtrlGetU2HubDescr(void)
     uint8_t len;
 
     CopyU2SetupReqPkg((uint8_t *)SetupGetU2HubDescr);
-    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ÐÐ¿ØÖÆ´«Êä
+    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
     if(s != ERR_SUCCESS)
     {
         return (s);
     }
     if(len < ((PUSB_SETUP_REQ)SetupGetU2HubDescr)->wLength)
     {
-        return (ERR_USB_BUF_OVER); // ÃèÊö·û³¤¶È´íÎó
+        return (ERR_USB_BUF_OVER); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½
     }
-    //  if ( len < 4 ) return( ERR_USB_BUF_OVER );                                 // ÃèÊö·û³¤¶È´íÎó
+    //  if ( len < 4 ) return( ERR_USB_BUF_OVER );                                 // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½
     return (ERR_SUCCESS);
 }
 
 /*********************************************************************
  * @fn      U2HubGetPortStatus
  *
- * @brief   ²éÑ¯HUB¶Ë¿Ú×´Ì¬,·µ»ØÔÚCom_BufferÖÐ
+ * @brief   ï¿½ï¿½Ñ¯HUBï¿½Ë¿ï¿½×´Ì¬,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Com_Bufferï¿½ï¿½
  *
- * @param   HubPortIndex    - ¶Ë¿ÚºÅ
+ * @param   HubPortIndex    - ï¿½Ë¿Úºï¿½
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t U2HubGetPortStatus(uint8_t HubPortIndex)
 {
@@ -771,14 +771,14 @@ uint8_t U2HubGetPortStatus(uint8_t HubPortIndex)
     pU2SetupReq->wValue = 0x0000;
     pU2SetupReq->wIndex = 0x0000 | HubPortIndex;
     pU2SetupReq->wLength = 0x0004;
-    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ÐÐ¿ØÖÆ´«Êä
+    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
     if(s != ERR_SUCCESS)
     {
         return (s);
     }
     if(len < 4)
     {
-        return (ERR_USB_BUF_OVER); // ÃèÊö·û³¤¶È´íÎó
+        return (ERR_USB_BUF_OVER); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½
     }
     return (ERR_SUCCESS);
 }
@@ -786,12 +786,12 @@ uint8_t U2HubGetPortStatus(uint8_t HubPortIndex)
 /*********************************************************************
  * @fn      U2HubSetPortFeature
  *
- * @brief   ÉèÖÃHUB¶Ë¿ÚÌØÐÔ
+ * @brief   ï¿½ï¿½ï¿½ï¿½HUBï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½
  *
- * @param   HubPortIndex    - ¶Ë¿ÚºÅ
- * @param   FeatureSelt     - ¶Ë¿ÚÌØÐÔ
+ * @param   HubPortIndex    - ï¿½Ë¿Úºï¿½
+ * @param   FeatureSelt     - ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t U2HubSetPortFeature(uint8_t HubPortIndex, uint8_t FeatureSelt)
 {
@@ -800,18 +800,18 @@ uint8_t U2HubSetPortFeature(uint8_t HubPortIndex, uint8_t FeatureSelt)
     pU2SetupReq->wValue = 0x0000 | FeatureSelt;
     pU2SetupReq->wIndex = 0x0000 | HubPortIndex;
     pU2SetupReq->wLength = 0x0000;
-    return (U2HostCtrlTransfer(NULL, NULL)); // Ö´ÐÐ¿ØÖÆ´«Êä
+    return (U2HostCtrlTransfer(NULL, NULL)); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
 }
 
 /*********************************************************************
  * @fn      U2HubClearPortFeature
  *
- * @brief   Çå³ýHUB¶Ë¿ÚÌØÐÔ
+ * @brief   ï¿½ï¿½ï¿½HUBï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½
  *
- * @param   HubPortIndex    - ¶Ë¿ÚºÅ
- * @param   FeatureSelt     - ¶Ë¿ÚÌØÐÔ
+ * @param   HubPortIndex    - ï¿½Ë¿Úºï¿½
+ * @param   FeatureSelt     - ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½ï¿½
  *
- * @return  ´íÎóÂë
+ * @return  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 uint8_t U2HubClearPortFeature(uint8_t HubPortIndex, uint8_t FeatureSelt)
 {
@@ -820,5 +820,5 @@ uint8_t U2HubClearPortFeature(uint8_t HubPortIndex, uint8_t FeatureSelt)
     pU2SetupReq->wValue = 0x0000 | FeatureSelt;
     pU2SetupReq->wIndex = 0x0000 | HubPortIndex;
     pU2SetupReq->wLength = 0x0000;
-    return (U2HostCtrlTransfer(NULL, NULL)); // Ö´ÐÐ¿ØÖÆ´«Êä
+    return (U2HostCtrlTransfer(NULL, NULL)); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
 }

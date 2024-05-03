@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT ******************************
- * File Name         : CH58xBLE_LIB.H
+ * File Name         : CH58xBLE_LIB.h
  * Author            : WCH
  * Version           : V1.50
  * Date              : 2022/08/31
