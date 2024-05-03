@@ -1,7 +1,7 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR RISC-V)
 
-set(CROSSTOOL_PATH ~/wch/xpack-riscv-none-elf-gcc-12.2.0-1/bin CACHE INTERNAL "Toolchain path")
+set(CROSSTOOL_PATH /app/xpacks/.bin CACHE INTERNAL "Toolchain path")
 
 function(find_toolchain)
   foreach(CROSS_PREFIX ${ARGV})

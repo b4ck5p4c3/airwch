@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  airwch-create:
+    container_name: airwch-create
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: build
+        target: /mnt/build
