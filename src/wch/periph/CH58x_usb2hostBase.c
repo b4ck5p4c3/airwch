@@ -13,37 +13,37 @@
   #include "CHRV3UFI.h"
 #endif
 
-uint8_t       Usb2DevEndp0Size; // USB2ï¿½è±¸ï¿½Ä¶Ëµï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½
+uint8_t       Usb2DevEndp0Size; // USB2Éè±¸µÄ¶Ëµã0µÄ×î´ó°ü³ß´ç
 uint8_t       FoundNewU2Dev;
-_RootHubDev   ThisUsb2Dev;                   //ROOTï¿½ï¿½
-_DevOnHubPort DevOnU2HubPort[HUB_MAX_PORTS]; // ï¿½Ù¶ï¿½:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½â²¿HUB,Ã¿ï¿½ï¿½ï¿½â²¿HUBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HUB_MAX_PORTSï¿½ï¿½ï¿½Ë¿ï¿½(ï¿½ï¿½ï¿½Ë²ï¿½ï¿½ï¿½)
+_RootHubDev   ThisUsb2Dev;                   //ROOT¿Ú
+_DevOnHubPort DevOnU2HubPort[HUB_MAX_PORTS]; // ¼Ù¶¨:²»³¬¹ý1¸öÍâ²¿HUB,Ã¿¸öÍâ²¿HUB²»³¬¹ýHUB_MAX_PORTS¸ö¶Ë¿Ú(¶àÁË²»¹Ü)
 
 uint8_t *pU2HOST_RX_RAM_Addr;
 uint8_t *pU2HOST_TX_RAM_Addr;
 
-/*ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+/*»ñÈ¡Éè±¸ÃèÊö·û*/
 __attribute__((aligned(4))) const uint8_t SetupGetU2DevDescr[] = {USB_REQ_TYP_IN, USB_GET_DESCRIPTOR, 0x00,
                                                                   USB_DESCR_TYP_DEVICE, 0x00, 0x00, sizeof(USB_DEV_DESCR), 0x00};
-/*ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+/*»ñÈ¡ÅäÖÃÃèÊö·û*/
 __attribute__((aligned(4))) const uint8_t SetupGetU2CfgDescr[] = {USB_REQ_TYP_IN, USB_GET_DESCRIPTOR, 0x00,
                                                                   USB_DESCR_TYP_CONFIG, 0x00, 0x00, 0x04, 0x00};
-/*ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½Ö·*/
+/*ÉèÖÃUSBµØÖ·*/
 __attribute__((aligned(4))) const uint8_t SetupSetUsb2Addr[] = {USB_REQ_TYP_OUT, USB_SET_ADDRESS, USB_DEVICE_ADDR,
                                                                 0x00, 0x00, 0x00, 0x00, 0x00};
-/*ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½*/
+/*ÉèÖÃUSBÅäÖÃ*/
 __attribute__((aligned(4))) const uint8_t SetupSetUsb2Config[] = {USB_REQ_TYP_OUT, USB_SET_CONFIGURATION,
                                                                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-/*ï¿½ï¿½ï¿½ï¿½USBï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½*/
+/*ÉèÖÃUSB½Ó¿ÚÅäÖÃ*/
 __attribute__((aligned(4))) const uint8_t SetupSetUsb2Interface[] = {USB_REQ_RECIP_INTERF, USB_SET_INTERFACE,
                                                                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-/*ï¿½ï¿½ï¿½ï¿½Ëµï¿½STALL*/
+/*Çå³ý¶ËµãSTALL*/
 __attribute__((aligned(4))) const uint8_t SetupClrU2EndpStall[] = {USB_REQ_TYP_OUT | USB_REQ_RECIP_ENDP, USB_CLEAR_FEATURE,
                                                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 /*********************************************************************
  * @fn      DisableRootU2HubPort
  *
- * @brief   ï¿½Ø±ï¿½ROOT-HUBï¿½Ë¿ï¿½,Êµï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½Ô¶ï¿½ï¿½Ø±ï¿½,ï¿½Ë´ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ð©ï¿½á¹¹×´Ì¬
+ * @brief   ¹Ø±ÕROOT-HUB¶Ë¿Ú,Êµ¼ÊÉÏÓ²¼þÒÑ¾­×Ô¶¯¹Ø±Õ,´Ë´¦Ö»ÊÇÇå³ýÒ»Ð©½á¹¹×´Ì¬
  *
  * @param   none
  *
@@ -63,12 +63,12 @@ void DisableRootU2HubPort(void)
 /*********************************************************************
  * @fn      AnalyzeRootU2Hub
  *
- * @brief   ï¿½ï¿½ï¿½ï¿½ROOT-HUB×´Ì¬,ï¿½ï¿½ï¿½ï¿½ROOT-HUBï¿½Ë¿Úµï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
- *          ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Î³ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½DisableRootHubPort()ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ë¿Ú¹Ø±ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½,ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ë¿Úµï¿½×´Ì¬Î»
+ * @brief   ·ÖÎöROOT-HUB×´Ì¬,´¦ÀíROOT-HUB¶Ë¿ÚµÄÉè±¸²å°ÎÊÂ¼þ
+ *          Èç¹ûÉè±¸°Î³ö,º¯ÊýÖÐµ÷ÓÃDisableRootHubPort()º¯Êý,½«¶Ë¿Ú¹Ø±Õ,²åÈëÊÂ¼þ,ÖÃÏàÓ¦¶Ë¿ÚµÄ×´Ì¬Î»
  *
  * @param   none
  *
- * @return  ï¿½ï¿½ï¿½ï¿½ERR_SUCCESSÎªÃ»ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ERR_USB_CONNECTÎªï¿½ï¿½âµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ERR_USB_DISCONÎªï¿½ï¿½âµ½ï¿½Ï¿ï¿½
+ * @return  ·µ»ØERR_SUCCESSÎªÃ»ÓÐÇé¿ö,·µ»ØERR_USB_CONNECTÎª¼ì²âµ½ÐÂÁ¬½Ó,·µ»ØERR_USB_DISCONÎª¼ì²âµ½¶Ï¿ª
  */
 uint8_t AnalyzeRootU2Hub(void)
 {
@@ -77,20 +77,20 @@ uint8_t AnalyzeRootU2Hub(void)
     s = ERR_SUCCESS;
 
     if(R8_USB2_MIS_ST & RB_UMS_DEV_ATTACH)
-    { // ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+    { // Éè±¸´æÔÚ
 #ifdef DISK_BASE_BUF_LEN
         if(CHRV3DiskStatus == DISK_DISCONNECT
 #else
-        if(ThisUsb2Dev.DeviceStatus == ROOT_DEV_DISCONNECT // ï¿½ï¿½âµ½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+        if(ThisUsb2Dev.DeviceStatus == ROOT_DEV_DISCONNECT // ¼ì²âµ½ÓÐÉè±¸²åÈë
 #endif
            || (R8_U2HOST_CTRL & RB_UH_PORT_EN) == 0x00)
-        {                           // ï¿½ï¿½âµ½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½,Ëµï¿½ï¿½ï¿½Ç¸Õ²ï¿½ï¿½ï¿½
-            DisableRootU2HubPort(); // ï¿½Ø±Õ¶Ë¿ï¿½
+        {                           // ¼ì²âµ½ÓÐÉè±¸²åÈë,µ«ÉÐÎ´ÔÊÐí,ËµÃ÷ÊÇ¸Õ²åÈë
+            DisableRootU2HubPort(); // ¹Ø±Õ¶Ë¿Ú
 #ifdef DISK_BASE_BUF_LEN
             CHRV3DiskStatus = DISK_CONNECT;
 #else
             ThisUsb2Dev.DeviceSpeed = R8_USB2_MIS_ST & RB_UMS_DM_LEVEL ? 0 : 1;
-            ThisUsb2Dev.DeviceStatus = ROOT_DEV_CONNECTED; //ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½Ö¾
+            ThisUsb2Dev.DeviceStatus = ROOT_DEV_CONNECTED; //ÖÃÁ¬½Ó±êÖ¾
 #endif
             PRINT("USB2 dev in\n");
             s = ERR_USB_CONNECT;
@@ -102,23 +102,23 @@ uint8_t AnalyzeRootU2Hub(void)
     {
 #else
     else if(ThisUsb2Dev.DeviceStatus >= ROOT_DEV_CONNECTED)
-    { //ï¿½ï¿½âµ½ï¿½è±¸ï¿½Î³ï¿½
+    { //¼ì²âµ½Éè±¸°Î³ö
 #endif
-        DisableRootU2HubPort(); // ï¿½Ø±Õ¶Ë¿ï¿½
+        DisableRootU2HubPort(); // ¹Ø±Õ¶Ë¿Ú
         PRINT("USB2 dev out\n");
         if(s == ERR_SUCCESS)
             s = ERR_USB_DISCON;
     }
-    //  R8_USB_INT_FG = RB_UIF_DETECT;                                                  // ï¿½ï¿½ï¿½Ð¶Ï±ï¿½Ö¾
+    //  R8_USB_INT_FG = RB_UIF_DETECT;                                                  // ÇåÖÐ¶Ï±êÖ¾
     return (s);
 }
 
 /*********************************************************************
  * @fn      SetHostUsb2Addr
  *
- * @brief   ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½Ö·
+ * @brief   ÉèÖÃUSBÖ÷»úµ±Ç°²Ù×÷µÄUSBÉè±¸µØÖ·
  *
- * @param   addr    - USBï¿½è±¸ï¿½ï¿½Ö·
+ * @param   addr    - USBÉè±¸µØÖ·
  *
  * @return  none
  */
@@ -130,23 +130,23 @@ void SetHostUsb2Addr(uint8_t addr)
 /*********************************************************************
  * @fn      SetUsb2Speed
  *
- * @brief   ï¿½ï¿½ï¿½Ãµï¿½Ç°USBï¿½Ù¶ï¿½
+ * @brief   ÉèÖÃµ±Ç°USBËÙ¶È
  *
- * @param   FullSpeed   - USBï¿½Ù¶ï¿½
+ * @param   FullSpeed   - USBËÙ¶È
  *
  * @return  none
  */
 void SetUsb2Speed(uint8_t FullSpeed)
 {
 #ifndef DISK_BASE_BUF_LEN
-    if(FullSpeed) // È«ï¿½ï¿½
+    if(FullSpeed) // È«ËÙ
     {
-        R8_USB2_CTRL &= ~RB_UC_LOW_SPEED;  // È«ï¿½ï¿½
-        R8_U2H_SETUP &= ~RB_UH_PRE_PID_EN; // ï¿½ï¿½Ö¹PRE PID
+        R8_USB2_CTRL &= ~RB_UC_LOW_SPEED;  // È«ËÙ
+        R8_U2H_SETUP &= ~RB_UH_PRE_PID_EN; // ½ûÖ¹PRE PID
     }
     else
     {
-        R8_USB2_CTRL |= RB_UC_LOW_SPEED; // ï¿½ï¿½ï¿½ï¿½
+        R8_USB2_CTRL |= RB_UC_LOW_SPEED; // µÍËÙ
     }
 #endif
     (void)FullSpeed;
@@ -155,7 +155,7 @@ void SetUsb2Speed(uint8_t FullSpeed)
 /*********************************************************************
  * @fn      ResetRootU2HubPort
  *
- * @brief   ï¿½ï¿½âµ½ï¿½è±¸ï¿½ï¿½,ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½,ÎªÃ¶ï¿½ï¿½ï¿½è±¸×¼ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ÎªÄ¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
+ * @brief   ¼ì²âµ½Éè±¸ºó,¸´Î»×ÜÏß,ÎªÃ¶¾ÙÉè±¸×¼±¸,ÉèÖÃÎªÄ¬ÈÏÎªÈ«ËÙ
  *
  * @param   none
  *
@@ -163,25 +163,25 @@ void SetUsb2Speed(uint8_t FullSpeed)
  */
 void ResetRootU2HubPort(void)
 {
-    Usb2DevEndp0Size = DEFAULT_ENDP0_SIZE; //USB2ï¿½è±¸ï¿½Ä¶Ëµï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½
+    Usb2DevEndp0Size = DEFAULT_ENDP0_SIZE; //USB2Éè±¸µÄ¶Ëµã0µÄ×î´ó°ü³ß´ç
     SetHostUsb2Addr(0x00);
-    R8_U2HOST_CTRL &= ~RB_UH_PORT_EN;                                       // ï¿½Øµï¿½ï¿½Ë¿ï¿½
-    SetUsb2Speed(1);                                                        // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½
-    R8_U2HOST_CTRL = (R8_U2HOST_CTRL & ~RB_UH_LOW_SPEED) | RB_UH_BUS_RESET; // Ä¬ï¿½ï¿½ÎªÈ«ï¿½ï¿½,ï¿½ï¿½Ê¼ï¿½ï¿½Î»
-    mDelaymS(15);                                                           // ï¿½ï¿½Î»Ê±ï¿½ï¿½10mSï¿½ï¿½20mS
-    R8_U2HOST_CTRL = R8_U2HOST_CTRL & ~RB_UH_BUS_RESET;                     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»
+    R8_U2HOST_CTRL &= ~RB_UH_PORT_EN;                                       // ¹Øµô¶Ë¿Ú
+    SetUsb2Speed(1);                                                        // Ä¬ÈÏÎªÈ«ËÙ
+    R8_U2HOST_CTRL = (R8_U2HOST_CTRL & ~RB_UH_LOW_SPEED) | RB_UH_BUS_RESET; // Ä¬ÈÏÎªÈ«ËÙ,¿ªÊ¼¸´Î»
+    mDelaymS(15);                                                           // ¸´Î»Ê±¼ä10mSµ½20mS
+    R8_U2HOST_CTRL = R8_U2HOST_CTRL & ~RB_UH_BUS_RESET;                     // ½áÊø¸´Î»
     mDelayuS(250);
-    R8_USB2_INT_FG = RB_UIF_DETECT; // ï¿½ï¿½ï¿½Ð¶Ï±ï¿½Ö¾
+    R8_USB2_INT_FG = RB_UIF_DETECT; // ÇåÖÐ¶Ï±êÖ¾
 }
 
 /*********************************************************************
  * @fn      EnableRootU2HubPort
  *
- * @brief   Ê¹ï¿½ï¿½ROOT-HUBï¿½Ë¿ï¿½,ï¿½ï¿½Ó¦ï¿½ï¿½bUH_PORT_ENï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½,ï¿½è±¸ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½Â·ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
+ * @brief   Ê¹ÄÜROOT-HUB¶Ë¿Ú,ÏàÓ¦µÄbUH_PORT_ENÖÃ1¿ªÆô¶Ë¿Ú,Éè±¸¶Ï¿ª¿ÉÄÜµ¼ÖÂ·µ»ØÊ§°Ü
  *
  * @param   none
  *
- * @return  ï¿½ï¿½ï¿½ï¿½ERR_SUCCESSÎªï¿½ï¿½âµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ERR_USB_DISCONÎªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @return  ·µ»ØERR_SUCCESSÎª¼ì²âµ½ÐÂÁ¬½Ó,·µ»ØERR_USB_DISCONÎªÎÞÁ¬½Ó
  */
 uint8_t EnableRootU2HubPort(void)
 {
@@ -193,16 +193,16 @@ uint8_t EnableRootU2HubPort(void)
         ThisUsb2Dev.DeviceStatus = ROOT_DEV_CONNECTED;
 #endif
     if(R8_USB2_MIS_ST & RB_UMS_DEV_ATTACH)
-    { // ï¿½ï¿½ï¿½è±¸
+    { // ÓÐÉè±¸
 #ifndef DISK_BASE_BUF_LEN
         if((R8_U2HOST_CTRL & RB_UH_PORT_EN) == 0x00)
-        { // ï¿½ï¿½Î´Ê¹ï¿½ï¿½
+        { // ÉÐÎ´Ê¹ÄÜ
             ThisUsb2Dev.DeviceSpeed = (R8_USB2_MIS_ST & RB_UMS_DM_LEVEL) ? 0 : 1;
             if(ThisUsb2Dev.DeviceSpeed == 0)
-                R8_U2HOST_CTRL |= RB_UH_LOW_SPEED; // ï¿½ï¿½ï¿½ï¿½
+                R8_U2HOST_CTRL |= RB_UH_LOW_SPEED; // µÍËÙ
         }
 #endif
-        R8_U2HOST_CTRL |= RB_UH_PORT_EN; //Ê¹ï¿½ï¿½HUBï¿½Ë¿ï¿½
+        R8_U2HOST_CTRL |= RB_UH_PORT_EN; //Ê¹ÄÜHUB¶Ë¿Ú
         return (ERR_SUCCESS);
     }
     return (ERR_USB_DISCON);
@@ -212,28 +212,28 @@ uint8_t EnableRootU2HubPort(void)
 /*********************************************************************
  * @fn      SelectU2HubPort
  *
- * @brief   Ñ¡ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HUBï¿½ï¿½
+ * @brief   Ñ¡¶¨ÐèÒª²Ù×÷µÄHUB¿Ú
  *
- * @param   HubPortIndex    - Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ROOT-HUBï¿½Ë¿Úµï¿½ï¿½â²¿HUBï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ë¿ï¿½
+ * @param   HubPortIndex    - Ñ¡Ôñ²Ù×÷Ö¸¶¨µÄROOT-HUB¶Ë¿ÚµÄÍâ²¿HUBµÄÖ¸¶¨¶Ë¿Ú
  *
  * @return  None
  */
 void SelectU2HubPort(uint8_t HubPortIndex)
 {
-    if(HubPortIndex) // Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ROOT-HUBï¿½Ë¿Úµï¿½ï¿½â²¿HUBï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ë¿ï¿½
+    if(HubPortIndex) // Ñ¡Ôñ²Ù×÷Ö¸¶¨µÄROOT-HUB¶Ë¿ÚµÄÍâ²¿HUBµÄÖ¸¶¨¶Ë¿Ú
     {
-        SetHostUsb2Addr(DevOnU2HubPort[HubPortIndex - 1].DeviceAddress); // ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½Ö·
-        SetUsb2Speed(DevOnU2HubPort[HubPortIndex - 1].DeviceSpeed);      // ï¿½ï¿½ï¿½Ãµï¿½Ç°USBï¿½Ù¶ï¿½
-        if(DevOnU2HubPort[HubPortIndex - 1].DeviceSpeed == 0)            // Í¨ï¿½ï¿½ï¿½â²¿HUBï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸Í¨Ñ¶ï¿½ï¿½ÒªÇ°ï¿½ï¿½ID
+        SetHostUsb2Addr(DevOnU2HubPort[HubPortIndex - 1].DeviceAddress); // ÉèÖÃUSBÖ÷»úµ±Ç°²Ù×÷µÄUSBÉè±¸µØÖ·
+        SetUsb2Speed(DevOnU2HubPort[HubPortIndex - 1].DeviceSpeed);      // ÉèÖÃµ±Ç°USBËÙ¶È
+        if(DevOnU2HubPort[HubPortIndex - 1].DeviceSpeed == 0)            // Í¨¹ýÍâ²¿HUBÓëµÍËÙUSBÉè±¸Í¨Ñ¶ÐèÒªÇ°ÖÃID
         {
-            R8_U2EP1_CTRL |= RB_UH_PRE_PID_EN; // ï¿½ï¿½ï¿½ï¿½PRE PID
+            R8_U2EP1_CTRL |= RB_UH_PRE_PID_EN; // ÆôÓÃPRE PID
             mDelayuS(100);
         }
     }
     else
     {
-        SetHostUsb2Addr(ThisUsb2Dev.DeviceAddress); // ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½Ö·
-        SetUsb2Speed(ThisUsb2Dev.DeviceSpeed);      // ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½Ù¶ï¿½
+        SetHostUsb2Addr(ThisUsb2Dev.DeviceAddress); // ÉèÖÃUSBÖ÷»úµ±Ç°²Ù×÷µÄUSBÉè±¸µØÖ·
+        SetUsb2Speed(ThisUsb2Dev.DeviceSpeed);      // ÉèÖÃUSBÉè±¸µÄËÙ¶È
     }
 }
 #endif
@@ -241,11 +241,11 @@ void SelectU2HubPort(uint8_t HubPortIndex)
 /*********************************************************************
  * @fn      WaitUSB2_Interrupt
  *
- * @brief   ï¿½È´ï¿½USBï¿½Ð¶ï¿½
+ * @brief   µÈ´ýUSBÖÐ¶Ï
  *
  * @param   none
  *
- * @return  ï¿½ï¿½ï¿½ï¿½ERR_SUCCESS ï¿½ï¿½ï¿½Ý½ï¿½ï¿½Õ»ï¿½ï¿½ß·ï¿½ï¿½Í³É¹ï¿½,ï¿½ï¿½ï¿½ï¿½ERR_USB_UNKNOWN ï¿½ï¿½ï¿½Ý½ï¿½ï¿½Õ»ï¿½ï¿½ß·ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
+ * @return  ·µ»ØERR_SUCCESS Êý¾Ý½ÓÊÕ»òÕß·¢ËÍ³É¹¦,·µ»ØERR_USB_UNKNOWN Êý¾Ý½ÓÊÕ»òÕß·¢ËÍÊ§°Ü
  */
 uint8_t WaitUSB2_Interrupt(void)
 {
@@ -260,17 +260,17 @@ uint8_t WaitUSB2_Interrupt(void)
 /*********************************************************************
  * @fn      USB2HostTransact
  *
- * @brief   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½Ä¶Ëµï¿½ï¿½Ö·/PIDï¿½ï¿½ï¿½ï¿½,Í¬ï¿½ï¿½ï¿½ï¿½Ö¾,ï¿½ï¿½20uSÎªï¿½ï¿½Î»ï¿½ï¿½NAKï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½(0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,0xFFFFï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½),ï¿½ï¿½ï¿½ï¿½0ï¿½É¹ï¿½,ï¿½ï¿½Ê±/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
- *          ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½,Îªï¿½ï¿½ï¿½á¹©ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½,Ó¦ï¿½Ã¶Ô±ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½
+ * @brief   ´«ÊäÊÂÎñ,ÊäÈëÄ¿µÄ¶ËµãµØÖ·/PIDÁîÅÆ,Í¬²½±êÖ¾,ÒÔ20uSÎªµ¥Î»µÄNAKÖØÊÔ×ÜÊ±¼ä(0Ôò²»ÖØÊÔ,0xFFFFÎÞÏÞÖØÊÔ),·µ»Ø0³É¹¦,³¬Ê±/³ö´íÖØÊÔ
+ *          ±¾×Ó³ÌÐò×ÅÖØÓÚÒ×Àí½â,¶øÔÚÊµ¼ÊÓ¦ÓÃÖÐ,ÎªÁËÌá¹©ÔËÐÐËÙ¶È,Ó¦¸Ã¶Ô±¾×Ó³ÌÐò´úÂë½øÐÐÓÅ»¯
  *
- * @param   endp_pid    - ï¿½ï¿½ï¿½ÆºÍµï¿½Ö·, ï¿½ï¿½4Î»ï¿½ï¿½token_pidï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½4Î»ï¿½Ç¶Ëµï¿½ï¿½Ö·
- * @param   tog         - Í¬ï¿½ï¿½ï¿½ï¿½Ö¾
- * @param   timeout     - ï¿½ï¿½Ê±Ê±ï¿½ï¿½
+ * @param   endp_pid    - ÁîÅÆºÍµØÖ·, ¸ß4Î»ÊÇtoken_pidÁîÅÆ, µÍ4Î»ÊÇ¶ËµãµØÖ·
+ * @param   tog         - Í¬²½±êÖ¾
+ * @param   timeout     - ³¬Ê±Ê±¼ä
  *
- * @return  ERR_USB_UNKNOWN ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ì³£
- *          ERR_USB_DISCON  ï¿½è±¸ï¿½Ï¿ï¿½
- *          ERR_USB_CONNECT ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
- *          ERR_SUCCESS     ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @return  ERR_USB_UNKNOWN ³¬Ê±£¬¿ÉÄÜÓ²¼þÒì³£
+ *          ERR_USB_DISCON  Éè±¸¶Ï¿ª
+ *          ERR_USB_CONNECT Éè±¸Á¬½Ó
+ *          ERR_SUCCESS     ´«ÊäÍê³É
  */
 uint8_t USB2HostTransact(uint8_t endp_pid, uint8_t tog, uint32_t timeout)
 {
@@ -284,21 +284,21 @@ uint8_t USB2HostTransact(uint8_t endp_pid, uint8_t tog, uint32_t timeout)
 
     do
     {
-        R8_U2H_EP_PID = endp_pid; // Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PIDï¿½ï¿½Ä¿ï¿½Ä¶Ëµï¿½ï¿½
+        R8_U2H_EP_PID = endp_pid; // Ö¸¶¨ÁîÅÆPIDºÍÄ¿µÄ¶ËµãºÅ
         R8_USB2_INT_FG = RB_UIF_TRANSFER;
         for(i = WAIT_USB_TOUT_200US; i != 0 && (R8_USB2_INT_FG & RB_UIF_TRANSFER) == 0; i--)
             ;
-        R8_U2H_EP_PID = 0x00; // Í£Ö¹USBï¿½ï¿½ï¿½ï¿½
+        R8_U2H_EP_PID = 0x00; // Í£Ö¹USB´«Êä
         if((R8_USB2_INT_FG & RB_UIF_TRANSFER) == 0)
         {
             return (ERR_USB_UNKNOWN);
         }
 
         if(R8_USB2_INT_FG & RB_UIF_DETECT)
-        { // USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
-            //      mDelayuS( 200 );                                                       // ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        { // USBÉè±¸²å°ÎÊÂ¼þ
+            //      mDelayuS( 200 );                                                       // µÈ´ý´«ÊäÍê³É
             R8_USB2_INT_FG = RB_UIF_DETECT;
-            s = AnalyzeRootU2Hub(); // ï¿½ï¿½ï¿½ï¿½ROOT-U2HUB×´Ì¬
+            s = AnalyzeRootU2Hub(); // ·ÖÎöROOT-U2HUB×´Ì¬
 
             if(s == ERR_USB_CONNECT)
                 FoundNewU2Dev = 1;
@@ -306,31 +306,31 @@ uint8_t USB2HostTransact(uint8_t endp_pid, uint8_t tog, uint32_t timeout)
             if(CHRV3DiskStatus == DISK_DISCONNECT)
             {
                 return (ERR_USB_DISCON);
-            } // USBï¿½è±¸ï¿½Ï¿ï¿½ï¿½Â¼ï¿½
+            } // USBÉè±¸¶Ï¿ªÊÂ¼þ
             if(CHRV3DiskStatus == DISK_CONNECT)
             {
                 return (ERR_USB_CONNECT);
-            } // USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
+            } // USBÉè±¸Á¬½ÓÊÂ¼þ
 #else
             if(ThisUsb2Dev.DeviceStatus == ROOT_DEV_DISCONNECT)
             {
                 return (ERR_USB_DISCON);
-            } // USBï¿½è±¸ï¿½Ï¿ï¿½ï¿½Â¼ï¿½
+            } // USBÉè±¸¶Ï¿ªÊÂ¼þ
             if(ThisUsb2Dev.DeviceStatus == ROOT_DEV_CONNECTED)
             {
                 return (ERR_USB_CONNECT);
-            } // USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
+            } // USBÉè±¸Á¬½ÓÊÂ¼þ
 #endif
-            mDelayuS(200); // ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            mDelayuS(200); // µÈ´ý´«ÊäÍê³É
         }
 
-        if(R8_USB2_INT_FG & RB_UIF_TRANSFER) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
+        if(R8_USB2_INT_FG & RB_UIF_TRANSFER) // ´«ÊäÍê³ÉÊÂ¼þ
         {
             if(R8_USB2_INT_ST & RB_UIS_TOG_OK)
             {
                 return (ERR_SUCCESS);
             }
-            r = R8_USB2_INT_ST & MASK_UIS_H_RES; // USBï¿½è±¸Ó¦ï¿½ï¿½×´Ì¬
+            r = R8_USB2_INT_ST & MASK_UIS_H_RES; // USBÉè±¸Ó¦´ð×´Ì¬
             if(r == USB_PID_STALL)
             {
                 return (r | ERR_USB_TRANSFER);
@@ -353,41 +353,41 @@ uint8_t USB2HostTransact(uint8_t endp_pid, uint8_t tog, uint32_t timeout)
                         if(r)
                         {
                             return (r | ERR_USB_TRANSFER);
-                        }      // ï¿½ï¿½ï¿½Ç³ï¿½Ê±/ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½
-                        break; // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+                        }      // ²»ÊÇ³¬Ê±/³ö´í,ÒâÍâÓ¦´ð
+                        break; // ³¬Ê±ÖØÊÔ
                     case USB_PID_IN:
                         if(r == USB_PID_DATA0 || r == USB_PID_DATA1)
-                        { // ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½è¶ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-                        } // ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                        { // ²»Í¬²½ÔòÐè¶ªÆúºóÖØÊÔ
+                        } // ²»Í¬²½ÖØÊÔ
                         else if(r)
                         {
                             return (r | ERR_USB_TRANSFER);
-                        }      // ï¿½ï¿½ï¿½Ç³ï¿½Ê±/ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½
-                        break; // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+                        }      // ²»ÊÇ³¬Ê±/³ö´í,ÒâÍâÓ¦´ð
+                        break; // ³¬Ê±ÖØÊÔ
                     default:
-                        return (ERR_USB_UNKNOWN); // ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½ï¿½
+                        return (ERR_USB_UNKNOWN); // ²»¿ÉÄÜµÄÇé¿ö
                         break;
                 }
         }
         else
-        {                          // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½,ï¿½ï¿½Ó¦ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-            R8_USB2_INT_FG = 0xFF; /* ï¿½ï¿½ï¿½Ð¶Ï±ï¿½Ö¾ */
+        {                          // ÆäËüÖÐ¶Ï,²»Ó¦¸Ã·¢ÉúµÄÇé¿ö
+            R8_USB2_INT_FG = 0xFF; /* ÇåÖÐ¶Ï±êÖ¾ */
         }
         mDelayuS(15);
     } while(++TransRetry < 3);
-    return (ERR_USB_TRANSFER); // Ó¦ï¿½ï¿½Ê±
+    return (ERR_USB_TRANSFER); // Ó¦´ð³¬Ê±
 }
 
 /*********************************************************************
  * @fn      U2HostCtrlTransfer
  *
- * @brief   Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½,8ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pSetupReqï¿½ï¿½,DataBufÎªï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @brief   Ö´ÐÐ¿ØÖÆ´«Êä,8×Ö½ÚÇëÇóÂëÔÚpSetupReqÖÐ,DataBufÎª¿ÉÑ¡µÄÊÕ·¢»º³åÇø
  *
- * @param   DataBuf     - ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ÕºÍ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Ã´DataBufï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
- * @param   RetLen      - Êµï¿½Ê³É¹ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½Ü³ï¿½ï¿½È±ï¿½ï¿½ï¿½ï¿½ï¿½RetLenÖ¸ï¿½ï¿½ï¿½ï¿½Ö½Ú±ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @param   DataBuf     - Èç¹ûÐèÒª½ÓÊÕºÍ·¢ËÍÊý¾Ý,ÄÇÃ´DataBufÐèÖ¸ÏòÓÐÐ§»º³åÇøÓÃÓÚ´æ·ÅºóÐøÊý¾Ý
+ * @param   RetLen      - Êµ¼Ê³É¹¦ÊÕ·¢µÄ×Ü³¤¶È±£´æÔÚRetLenÖ¸ÏòµÄ×Ö½Ú±äÁ¿ÖÐ
  *
- * @return  ERR_USB_BUF_OVER    IN×´Ì¬ï¿½×¶Î³ï¿½ï¿½ï¿½
- *          ERR_SUCCESS         ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½ï¿½É¹ï¿½
+ * @return  ERR_USB_BUF_OVER    IN×´Ì¬½×¶Î³ö´í
+ *          ERR_SUCCESS         Êý¾Ý½»»»³É¹¦
  */
 uint8_t U2HostCtrlTransfer(uint8_t *DataBuf, uint8_t *RetLen)
 {
@@ -400,40 +400,40 @@ uint8_t U2HostCtrlTransfer(uint8_t *DataBuf, uint8_t *RetLen)
     pLen = RetLen;
     mDelayuS(200);
     if(pLen)
-        *pLen = 0; // Êµï¿½Ê³É¹ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½
+        *pLen = 0; // Êµ¼Ê³É¹¦ÊÕ·¢µÄ×Ü³¤¶È
 
     R8_U2H_TX_LEN = sizeof(USB_SETUP_REQ);
-    s = USB2HostTransact(USB_PID_SETUP << 4 | 0x00, 0x00, 200000 / 20); // SETUPï¿½×¶ï¿½,200mSï¿½ï¿½Ê±
+    s = USB2HostTransact(USB_PID_SETUP << 4 | 0x00, 0x00, 200000 / 20); // SETUP½×¶Î,200mS³¬Ê±
     if(s != ERR_SUCCESS)
         return (s);
-    R8_U2H_RX_CTRL = R8_U2H_TX_CTRL = RB_UH_R_TOG | RB_UH_R_AUTO_TOG | RB_UH_T_TOG | RB_UH_T_AUTO_TOG; // Ä¬ï¿½ï¿½DATA1
-    R8_U2H_TX_LEN = 0x01;                                                                              // Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¹ï¿½×´Ì¬ï¿½×¶ï¿½ÎªIN
+    R8_U2H_RX_CTRL = R8_U2H_TX_CTRL = RB_UH_R_TOG | RB_UH_R_AUTO_TOG | RB_UH_T_TOG | RB_UH_T_AUTO_TOG; // Ä¬ÈÏDATA1
+    R8_U2H_TX_LEN = 0x01;                                                                              // Ä¬ÈÏÎÞÊý¾Ý¹Ê×´Ì¬½×¶ÎÎªIN
     RemLen = pU2SetupReq->wLength;
-    if(RemLen && pBuf) // ï¿½ï¿½Òªï¿½Õ·ï¿½ï¿½ï¿½ï¿½ï¿½
+    if(RemLen && pBuf) // ÐèÒªÊÕ·¢Êý¾Ý
     {
-        if(pU2SetupReq->bRequestType & USB_REQ_TYP_IN) // ï¿½ï¿½
+        if(pU2SetupReq->bRequestType & USB_REQ_TYP_IN) // ÊÕ
         {
             while(RemLen)
             {
                 mDelayuS(200);
-                s = USB2HostTransact(USB_PID_IN << 4 | 0x00, R8_U2H_RX_CTRL, 200000 / 20); // INï¿½ï¿½ï¿½ï¿½
+                s = USB2HostTransact(USB_PID_IN << 4 | 0x00, R8_U2H_RX_CTRL, 200000 / 20); // INÊý¾Ý
                 if(s != ERR_SUCCESS)
                     return (s);
                 RxLen = R8_USB2_RX_LEN < RemLen ? R8_USB2_RX_LEN : RemLen;
                 RemLen -= RxLen;
                 if(pLen)
-                    *pLen += RxLen; // Êµï¿½Ê³É¹ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½
+                    *pLen += RxLen; // Êµ¼Ê³É¹¦ÊÕ·¢µÄ×Ü³¤¶È
                 for(RxCnt = 0; RxCnt != RxLen; RxCnt++)
                 {
                     *pBuf = pU2HOST_RX_RAM_Addr[RxCnt];
                     pBuf++;
                 }
                 if(R8_USB2_RX_LEN == 0 || (R8_USB2_RX_LEN & (Usb2DevEndp0Size - 1)))
-                    break; // ï¿½Ì°ï¿½
+                    break; // ¶Ì°ü
             }
-            R8_U2H_TX_LEN = 0x00; // ×´Ì¬ï¿½×¶ï¿½ÎªOUT
+            R8_U2H_TX_LEN = 0x00; // ×´Ì¬½×¶ÎÎªOUT
         }
-        else // ï¿½ï¿½
+        else // ·¢
         {
             while(RemLen)
             {
@@ -444,37 +444,37 @@ uint8_t U2HostCtrlTransfer(uint8_t *DataBuf, uint8_t *RetLen)
                     pU2HOST_TX_RAM_Addr[TxCnt] = *pBuf;
                     pBuf++;
                 }
-                s = USB2HostTransact(USB_PID_OUT << 4 | 0x00, R8_U2H_TX_CTRL, 200000 / 20); // OUTï¿½ï¿½ï¿½ï¿½
+                s = USB2HostTransact(USB_PID_OUT << 4 | 0x00, R8_U2H_TX_CTRL, 200000 / 20); // OUTÊý¾Ý
                 if(s != ERR_SUCCESS)
                     return (s);
                 RemLen -= R8_U2H_TX_LEN;
                 if(pLen)
-                    *pLen += R8_U2H_TX_LEN; // Êµï¿½Ê³É¹ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½
+                    *pLen += R8_U2H_TX_LEN; // Êµ¼Ê³É¹¦ÊÕ·¢µÄ×Ü³¤¶È
             }
-            //          R8_U2H_TX_LEN = 0x01;                                                     // ×´Ì¬ï¿½×¶ï¿½ÎªIN
+            //          R8_U2H_TX_LEN = 0x01;                                                     // ×´Ì¬½×¶ÎÎªIN
         }
     }
     mDelayuS(200);
-    s = USB2HostTransact((R8_U2H_TX_LEN ? USB_PID_IN << 4 | 0x00 : USB_PID_OUT << 4 | 0x00), RB_UH_R_TOG | RB_UH_T_TOG, 200000 / 20); // STATUSï¿½×¶ï¿½
+    s = USB2HostTransact((R8_U2H_TX_LEN ? USB_PID_IN << 4 | 0x00 : USB_PID_OUT << 4 | 0x00), RB_UH_R_TOG | RB_UH_T_TOG, 200000 / 20); // STATUS½×¶Î
     if(s != ERR_SUCCESS)
         return (s);
     if(R8_U2H_TX_LEN == 0)
         return (ERR_SUCCESS); // ×´Ì¬OUT
     if(R8_USB2_RX_LEN == 0)
-        return (ERR_SUCCESS);  // ×´Ì¬IN,ï¿½ï¿½ï¿½IN×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
-    return (ERR_USB_BUF_OVER); // IN×´Ì¬ï¿½×¶Î´ï¿½ï¿½ï¿½
+        return (ERR_SUCCESS);  // ×´Ì¬IN,¼ì²éIN×´Ì¬·µ»ØÊý¾Ý³¤¶È
+    return (ERR_USB_BUF_OVER); // IN×´Ì¬½×¶Î´íÎó
 }
 
 /*********************************************************************
  * @fn      CopyU2SetupReqPkg
  *
- * @brief   ï¿½ï¿½ï¿½Æ¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @brief   ¸´ÖÆ¿ØÖÆ´«ÊäµÄÇëÇó°ü
  *
- * @param   pReqPkt     - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
+ * @param   pReqPkt     - ¿ØÖÆÇëÇó°üµØÖ·
  *
  * @return  none
  */
-void CopyU2SetupReqPkg(const uint8_t *pReqPkt) // ï¿½ï¿½ï¿½Æ¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void CopyU2SetupReqPkg(const uint8_t *pReqPkt) // ¸´ÖÆ¿ØÖÆ´«ÊäµÄÇëÇó°ü
 {
     uint8_t i;
     for(i = 0; i != sizeof(USB_SETUP_REQ); i++)
@@ -487,12 +487,12 @@ void CopyU2SetupReqPkg(const uint8_t *pReqPkt) // ï¿½ï¿½ï¿½Æ¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ï¿
 /*********************************************************************
  * @fn      CtrlGetU2DeviceDescr
  *
- * @brief   ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ pHOST_TX_RAM_Addr ï¿½ï¿½
+ * @brief   »ñÈ¡Éè±¸ÃèÊö·û,·µ»ØÔÚ pHOST_TX_RAM_Addr ÖÐ
  *
  * @param   none
  *
- * @return  ERR_USB_BUF_OVER    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½
- *          ERR_SUCCESS         ï¿½É¹ï¿½
+ * @return  ERR_USB_BUF_OVER    ÃèÊö·û³¤¶È´íÎó
+ *          ERR_SUCCESS         ³É¹¦
  */
 uint8_t CtrlGetU2DeviceDescr(void)
 {
@@ -501,24 +501,24 @@ uint8_t CtrlGetU2DeviceDescr(void)
 
     Usb2DevEndp0Size = DEFAULT_ENDP0_SIZE;
     CopyU2SetupReqPkg((uint8_t *)SetupGetU2DevDescr);
-    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
+    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ÐÐ¿ØÖÆ´«Êä
     if(s != ERR_SUCCESS)
         return (s);
-    Usb2DevEndp0Size = ((PUSB_DEV_DESCR)U2Com_Buffer)->bMaxPacketSize0; // ï¿½Ëµï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ç¼ò»¯´ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½È»ï¿½È¡Ç°8ï¿½Ö½Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UsbDevEndp0Sizeï¿½Ù¼ï¿½ï¿½ï¿½
+    Usb2DevEndp0Size = ((PUSB_DEV_DESCR)U2Com_Buffer)->bMaxPacketSize0; // ¶Ëµã0×î´ó°ü³¤¶È,ÕâÊÇ¼ò»¯´¦Àí,Õý³£Ó¦¸ÃÏÈ»ñÈ¡Ç°8×Ö½ÚºóÁ¢¼´¸üÐÂUsbDevEndp0SizeÔÙ¼ÌÐø
     if(len < ((PUSB_SETUP_REQ)SetupGetU2DevDescr)->wLength)
-        return (ERR_USB_BUF_OVER); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½
+        return (ERR_USB_BUF_OVER); // ÃèÊö·û³¤¶È´íÎó
     return (ERR_SUCCESS);
 }
 
 /*********************************************************************
  * @fn      CtrlGetU2ConfigDescr
  *
- * @brief   ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ pHOST_TX_RAM_Addr ï¿½ï¿½
+ * @brief   »ñÈ¡ÅäÖÃÃèÊö·û,·µ»ØÔÚ pHOST_TX_RAM_Addr ÖÐ
  *
  * @param   none
  *
- * @return  ERR_USB_BUF_OVER    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½
- *          ERR_SUCCESS         ï¿½É¹ï¿½
+ * @return  ERR_USB_BUF_OVER    ÃèÊö·û³¤¶È´íÎó
+ *          ERR_SUCCESS         ³É¹¦
  */
 uint8_t CtrlGetU2ConfigDescr(void)
 {
@@ -526,23 +526,23 @@ uint8_t CtrlGetU2ConfigDescr(void)
     uint8_t len;
 
     CopyU2SetupReqPkg((uint8_t *)SetupGetU2CfgDescr);
-    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
+    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ÐÐ¿ØÖÆ´«Êä
     if(s != ERR_SUCCESS)
         return (s);
     if(len < ((PUSB_SETUP_REQ)SetupGetU2CfgDescr)->wLength)
-        return (ERR_USB_BUF_OVER); // ï¿½ï¿½ï¿½Ø³ï¿½ï¿½È´ï¿½ï¿½ï¿½
+        return (ERR_USB_BUF_OVER); // ·µ»Ø³¤¶È´íÎó
 
     len = ((PUSB_CFG_DESCR)U2Com_Buffer)->wTotalLength;
     CopyU2SetupReqPkg((uint8_t *)SetupGetU2CfgDescr);
-    pU2SetupReq->wLength = len;                 // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½
-    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
+    pU2SetupReq->wLength = len;                 // ÍêÕûÅäÖÃÃèÊö·ûµÄ×Ü³¤¶È
+    s = U2HostCtrlTransfer(U2Com_Buffer, &len); // Ö´ÐÐ¿ØÖÆ´«Êä
     if(s != ERR_SUCCESS)
         return (s);
 
 #ifdef DISK_BASE_BUF_LEN
     if(len > 64)
         len = 64;
-    memcpy(TxBuffer, U2Com_Buffer, len); //Uï¿½Ì²ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TxBuffer
+    memcpy(TxBuffer, U2Com_Buffer, len); //UÅÌ²Ù×÷Ê±£¬ÐèÒª¿½±´µ½TxBuffer
 #endif
 
     return (ERR_SUCCESS);
@@ -551,78 +551,78 @@ uint8_t CtrlGetU2ConfigDescr(void)
 /*********************************************************************
  * @fn      CtrlSetUsb2Address
  *
- * @brief   ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½Ö·
+ * @brief   ÉèÖÃUSBÉè±¸µØÖ·
  *
- * @param   addr    - ï¿½è±¸ï¿½ï¿½Ö·
+ * @param   addr    - Éè±¸µØÖ·
  *
- * @return  ERR_SUCCESS     ï¿½É¹ï¿½
+ * @return  ERR_SUCCESS     ³É¹¦
  */
 uint8_t CtrlSetUsb2Address(uint8_t addr)
 {
     uint8_t s;
 
     CopyU2SetupReqPkg((uint8_t *)SetupSetUsb2Addr);
-    pU2SetupReq->wValue = addr;         // USBï¿½è±¸ï¿½ï¿½Ö·
-    s = U2HostCtrlTransfer(NULL, NULL); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
+    pU2SetupReq->wValue = addr;         // USBÉè±¸µØÖ·
+    s = U2HostCtrlTransfer(NULL, NULL); // Ö´ÐÐ¿ØÖÆ´«Êä
     if(s != ERR_SUCCESS)
         return (s);
-    SetHostUsb2Addr(addr); // ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½Ö·
-    mDelaymS(10);          // ï¿½È´ï¿½USBï¿½è±¸ï¿½ï¿½É²ï¿½ï¿½ï¿½
+    SetHostUsb2Addr(addr); // ÉèÖÃUSBÖ÷»úµ±Ç°²Ù×÷µÄUSBÉè±¸µØÖ·
+    mDelaymS(10);          // µÈ´ýUSBÉè±¸Íê³É²Ù×÷
     return (ERR_SUCCESS);
 }
 
 /*********************************************************************
  * @fn      CtrlSetUsb2Config
  *
- * @brief   ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+ * @brief   ÉèÖÃUSBÉè±¸ÅäÖÃ
  *
- * @param   cfg     - ï¿½ï¿½ï¿½ï¿½Öµ
+ * @param   cfg     - ÅäÖÃÖµ
  *
- * @return  ERR_SUCCESS     ï¿½É¹ï¿½
+ * @return  ERR_SUCCESS     ³É¹¦
  */
 uint8_t CtrlSetUsb2Config(uint8_t cfg)
 {
     CopyU2SetupReqPkg((uint8_t *)SetupSetUsb2Config);
-    pU2SetupReq->wValue = cfg;               // USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
-    return (U2HostCtrlTransfer(NULL, NULL)); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
+    pU2SetupReq->wValue = cfg;               // USBÉè±¸ÅäÖÃ
+    return (U2HostCtrlTransfer(NULL, NULL)); // Ö´ÐÐ¿ØÖÆ´«Êä
 }
 
 /*********************************************************************
  * @fn      CtrlClearU2EndpStall
  *
- * @brief   ï¿½ï¿½ï¿½ï¿½Ëµï¿½STALL
+ * @brief   Çå³ý¶ËµãSTALL
  *
- * @param   endp    - ï¿½Ëµï¿½ï¿½Ö·
+ * @param   endp    - ¶ËµãµØÖ·
  *
- * @return  ERR_SUCCESS     ï¿½É¹ï¿½
+ * @return  ERR_SUCCESS     ³É¹¦
  */
 uint8_t CtrlClearU2EndpStall(uint8_t endp)
 {
-    CopyU2SetupReqPkg((uint8_t *)SetupClrU2EndpStall); // ï¿½ï¿½ï¿½ï¿½Ëµï¿½Ä´ï¿½ï¿½ï¿½
-    pU2SetupReq->wIndex = endp;                        // ï¿½Ëµï¿½ï¿½Ö·
-    return (U2HostCtrlTransfer(NULL, NULL));           // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
+    CopyU2SetupReqPkg((uint8_t *)SetupClrU2EndpStall); // Çå³ý¶ËµãµÄ´íÎó
+    pU2SetupReq->wIndex = endp;                        // ¶ËµãµØÖ·
+    return (U2HostCtrlTransfer(NULL, NULL));           // Ö´ÐÐ¿ØÖÆ´«Êä
 }
 
 /*********************************************************************
  * @fn      CtrlSetUsb2Intercace
  *
- * @brief   ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸ï¿½Ó¿ï¿½
+ * @brief   ÉèÖÃUSBÉè±¸½Ó¿Ú
  *
- * @param   cfg     - ï¿½ï¿½ï¿½ï¿½Öµ
+ * @param   cfg     - ÅäÖÃÖµ
  *
- * @return  ERR_SUCCESS     ï¿½É¹ï¿½
+ * @return  ERR_SUCCESS     ³É¹¦
  */
 uint8_t CtrlSetUsb2Intercace(uint8_t cfg)
 {
     CopyU2SetupReqPkg((uint8_t *)SetupSetUsb2Interface);
-    pU2SetupReq->wValue = cfg;               // USBï¿½è±¸ï¿½ï¿½ï¿½ï¿½
-    return (U2HostCtrlTransfer(NULL, NULL)); // Ö´ï¿½Ð¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½
+    pU2SetupReq->wValue = cfg;               // USBÉè±¸ÅäÖÃ
+    return (U2HostCtrlTransfer(NULL, NULL)); // Ö´ÐÐ¿ØÖÆ´«Êä
 }
 
 /*********************************************************************
  * @fn      USB2_HostInit
  *
- * @brief   USBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü³ï¿½Ê¼ï¿½ï¿½
+ * @brief   USBÖ÷»ú¹¦ÄÜ³õÊ¼»¯
  *
  * @param   none
  *

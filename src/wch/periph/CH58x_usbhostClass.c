@@ -27,7 +27,7 @@ __attribute__((aligned(4))) uint8_t Com_Buffer[128]; // �����û���
 /*********************************************************************
  * @fn      AnalyzeHidIntEndp
  *
- * @brief   ���������з�����HID�ж϶˵�ĵ�ַ,���HubPortIndex��0���浽ROOTHUB������Ƿ���ֵ�򱣴浽HUB�½ṹ��
+ * @brief   ���������з�����HID�ж϶˵�ĵ��?,���HubPortIndex��0���浽ROOTHUB������Ƿ���ֵ�򱣴浽HUB�½ṹ��
  *
  * @param   buf     - ���������ݻ�������ַ HubPortIndex��0��ʾ��HUB����0��ʾ�ⲿHUB�µĶ˿ں�
  *
@@ -40,11 +40,11 @@ uint8_t AnalyzeHidIntEndp(uint8_t *buf, uint8_t HubPortIndex)
 
     if(HubPortIndex)
     {
-        memset(DevOnHubPort[HubPortIndex - 1].GpVar, 0, sizeof(DevOnHubPort[HubPortIndex - 1].GpVar)); //�������
+        memset(DevOnHubPort[HubPortIndex - 1].GpVar, 0, sizeof(DevOnHubPort[HubPortIndex - 1].GpVar)); //�������?
     }
     else
     {
-        memset(ThisUsbDev.GpVar, 0, sizeof(ThisUsbDev.GpVar)); //�������
+        memset(ThisUsbDev.GpVar, 0, sizeof(ThisUsbDev.GpVar)); //�������?
     }
 
     for(i = 0; i < ((PUSB_CFG_DESCR)buf)->wTotalLength; i += l) // �����ж϶˵�������,���������������ͽӿ�������
@@ -52,14 +52,14 @@ uint8_t AnalyzeHidIntEndp(uint8_t *buf, uint8_t HubPortIndex)
         if(((PUSB_ENDP_DESCR)(buf + i))->bDescriptorType == USB_DESCR_TYP_ENDP                         // �Ƕ˵�������
            && (((PUSB_ENDP_DESCR)(buf + i))->bmAttributes & USB_ENDP_TYPE_MASK) == USB_ENDP_TYPE_INTER // ���ж϶˵�
            && (((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_DIR_MASK))                    // ��IN�˵�
-        {                                                                                              // �����ж϶˵�ĵ�ַ,λ7����ͬ����־λ,��0
+        {                                                                                              // �����ж϶˵�ĵ��?,λ7����ͬ����־λ,��0
             if(HubPortIndex)
             {
                 DevOnHubPort[HubPortIndex - 1].GpVar[s] = ((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_ADDR_MASK;
             }
             else
             {
-                ThisUsbDev.GpVar[s] = ((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_ADDR_MASK; // �ж϶˵�ĵ�ַ�����Ը�����Ҫ����wMaxPacketSize��bInterval
+                ThisUsbDev.GpVar[s] = ((PUSB_ENDP_DESCR)(buf + i))->bEndpointAddress & USB_ENDP_ADDR_MASK; // �ж϶˵�ĵ�ַ�����Ը������?����wMaxPacketSize��bInterval
             }
             PRINT("%02x ", (uint16_t)ThisUsbDev.GpVar[s]);
             s++;
@@ -81,7 +81,7 @@ uint8_t AnalyzeHidIntEndp(uint8_t *buf, uint8_t HubPortIndex)
 /*********************************************************************
  * @fn      AnalyzeBulkEndp
  *
- * @brief   �����������˵�,GpVar[0]��GpVar[1]����ϴ��˵㡣GpVar[2]��GpVar[3]����´��˵�
+ * @brief   �����������˵�,GpVar[0]��GpVar[1]����ϴ��˵�?GpVar[2]��GpVar[3]����´��˵�?
  *
  * @param   buf     - ���������ݻ�������ַ HubPortIndex��0��ʾ��HUB����0��ʾ�ⲿHUB�µĶ˿ں�
  *
@@ -95,11 +95,11 @@ uint8_t AnalyzeBulkEndp(uint8_t *buf, uint8_t HubPortIndex)
 
     if(HubPortIndex)
     {
-        memset(DevOnHubPort[HubPortIndex - 1].GpVar, 0, sizeof(DevOnHubPort[HubPortIndex - 1].GpVar)); //�������
+        memset(DevOnHubPort[HubPortIndex - 1].GpVar, 0, sizeof(DevOnHubPort[HubPortIndex - 1].GpVar)); //�������?
     }
     else
     {
-        memset(ThisUsbDev.GpVar, 0, sizeof(ThisUsbDev.GpVar)); //�������
+        memset(ThisUsbDev.GpVar, 0, sizeof(ThisUsbDev.GpVar)); //�������?
     }
 
     for(i = 0; i < ((PUSB_CFG_DESCR)buf)->wTotalLength; i += l) // �����ж϶˵�������,���������������ͽӿ�������
@@ -164,7 +164,7 @@ uint8_t InitRootDevice(void)
     uint8_t cfg, dv_cls, if_cls;
 
     PRINT("Reset host port\n");
-    ResetRootHubPort(); // ��⵽�豸��,��λ��Ӧ�˿ڵ�USB����
+    ResetRootHubPort(); // ��⵽�豸��?,��λ��Ӧ�˿ڵ�USB����
     for(i = 0, s = 0; i < 100; i++)
     { // �ȴ�USB�豸��λ����������,100mS��ʱ
         mDelaymS(1);
@@ -214,9 +214,9 @@ uint8_t InitRootDevice(void)
                     PRINT("x%02X ", (uint16_t)(Com_Buffer[i]));
                 }
                 PRINT("\n");
-                /* ��������������,��ȡ�˵�����/���˵��ַ/���˵��С��,���±���endp_addr��endp_size�� */
+                /* ��������������,��ȡ�˵�����/���˵���?/���˵��С��?,���±���endp_addr��endp_size�� */
                 cfg = ((PUSB_CFG_DESCR)Com_Buffer)->bConfigurationValue;
-                if_cls = ((PUSB_CFG_DESCR_LONG)Com_Buffer)->itf_descr.bInterfaceClass; // �ӿ������
+                if_cls = ((PUSB_CFG_DESCR_LONG)Com_Buffer)->itf_descr.bInterfaceClass; // �ӿ������?
 
                 if((dv_cls == 0x00) && (if_cls == USB_DEV_CLASS_STORAGE))
                 { // ��USB�洢���豸,������ȷ����U��
@@ -244,7 +244,7 @@ uint8_t InitRootDevice(void)
                     s = CtrlSetUsbConfig(cfg); // ����USB�豸����
                     if(s == ERR_SUCCESS)
                     {
-                        //	�豣��˵���Ϣ�Ա����������USB����
+                        //	�豣��˵����?�Ա����������USB����
                         ThisUsbDev.DeviceStatus = ROOT_DEV_SUCCESS;
                         ThisUsbDev.DeviceType = USB_DEV_CLASS_PRINTER;
                         PRINT("USB-Print Ready\n");
@@ -254,16 +254,16 @@ uint8_t InitRootDevice(void)
                 }
                 else if((dv_cls == 0x00) && (if_cls == USB_DEV_CLASS_HID) && ((PUSB_CFG_DESCR_LONG)Com_Buffer)->itf_descr.bInterfaceSubClass <= 0x01)
                 { // ��HID���豸,����/����
-                    //  ���������з�����HID�ж϶˵�ĵ�ַ
-                    s = AnalyzeHidIntEndp(Com_Buffer, 0); // ���������з�����HID�ж϶˵�ĵ�ַ
+                    //  ���������з�����HID�ж϶˵�ĵ��?
+                    s = AnalyzeHidIntEndp(Com_Buffer, 0); // ���������з�����HID�ж϶˵�ĵ��?
                     PRINT("AnalyzeHidIntEndp %02x\n", (uint16_t)s);
-                    //  �����ж϶˵�ĵ�ַ,λ7����ͬ����־λ,��0
+                    //  �����ж϶˵�ĵ��?,λ7����ͬ����־λ,��0
                     if_cls = ((PUSB_CFG_DESCR_LONG)Com_Buffer)->itf_descr.bInterfaceProtocol;
                     s = CtrlSetUsbConfig(cfg); // ����USB�豸����
                     if(s == ERR_SUCCESS)
                     {
                         //	    					Set_Idle( );
-                        //	�豣��˵���Ϣ�Ա����������USB����
+                        //	�豣��˵����?�Ա����������USB����
                         ThisUsbDev.DeviceStatus = ROOT_DEV_SUCCESS;
                         if(if_cls == 1)
                         {
@@ -276,7 +276,7 @@ uint8_t InitRootDevice(void)
                         else if(if_cls == 2)
                         {
                             ThisUsbDev.DeviceType = DEV_TYPE_MOUSE;
-                            //	Ϊ���Ժ��ѯ���״̬,Ӧ�÷���������,ȡ���ж϶˿ڵĵ�ַ,���ȵ���Ϣ
+                            //	Ϊ���Ժ���?���״�?,Ӧ�÷���������,ȡ���ж϶˿ڵĵ�ַ,���ȵ���Ϣ
                             PRINT("USB-Mouse Ready\n");
                             SetUsbSpeed(1); // Ĭ��Ϊȫ��
                             return (ERR_SUCCESS);
@@ -300,7 +300,7 @@ uint8_t InitRootDevice(void)
                         {
                             ThisUsbDev.DeviceStatus = ROOT_DEV_SUCCESS;
                             ThisUsbDev.DeviceType = USB_DEV_CLASS_HUB;
-                            //�豣��˵���Ϣ�Ա����������USB����,�����ж϶˵������HUB�¼�֪ͨ,��������ʹ�ò�ѯ״̬���ƴ������
+                            //�豣��˵����?�Ա����������USB����,�����ж϶˵������HUB�¼�֪ͨ,��������ʹ�ò�ѯ״̬���ƴ������?
                             //��HUB���˿��ϵ�,��ѯ���˿�״̬,��ʼ�����豸���ӵ�HUB�˿�,��ʼ���豸
                             for(i = 1; i <= ThisUsbDev.GpHUBPortNum; i++) // ��HUB���˿ڶ��ϵ�
                             {
@@ -322,7 +322,7 @@ uint8_t InitRootDevice(void)
                     s = CtrlSetUsbConfig(cfg); // ����USB�豸����
                     if(s == ERR_SUCCESS)
                     {
-                        //	�豣��˵���Ϣ�Ա����������USB����
+                        //	�豣��˵����?�Ա����������USB����
                         ThisUsbDev.DeviceStatus = ROOT_DEV_SUCCESS;
                         ThisUsbDev.DeviceType = DEV_TYPE_UNKNOW;
                         SetUsbSpeed(1);       // Ĭ��Ϊȫ��
@@ -372,8 +372,8 @@ uint8_t InitDevOnHub(uint8_t HubPortIndex)
     DevOnHubPort[HubPortIndex - 1].DeviceVID = ((uint16_t)((PUSB_DEV_DESCR)Com_Buffer)->idVendor); //����VID PID��Ϣ
     DevOnHubPort[HubPortIndex - 1].DevicePID = ((uint16_t)((PUSB_DEV_DESCR)Com_Buffer)->idProduct);
 
-    dv_cls = ((PUSB_DEV_DESCR)Com_Buffer)->bDeviceClass; // �豸�����
-    cfg = (1 << 4) + HubPortIndex;                       // �����һ��USB��ַ,�����ַ�ص�
+    dv_cls = ((PUSB_DEV_DESCR)Com_Buffer)->bDeviceClass; // �豸�����?
+    cfg = (1 << 4) + HubPortIndex;                       // �����һ��USB��ַ,�����ַ�ص�?
     s = CtrlSetUsbAddress(cfg);                          // ����USB�豸��ַ
     if(s != ERR_SUCCESS)
     {
@@ -392,8 +392,8 @@ uint8_t InitDevOnHub(uint8_t HubPortIndex)
         PRINT("x%02X ", (uint16_t)(Com_Buffer[i]));
     }
     PRINT("\n");
-    /* ��������������,��ȡ�˵�����/���˵��ַ/���˵��С��,���±���endp_addr��endp_size�� */
-    if_cls = ((PXUSB_CFG_DESCR_LONG)Com_Buffer)->itf_descr.bInterfaceClass; // �ӿ������
+    /* ��������������,��ȡ�˵�����/���˵���?/���˵��С��?,���±���endp_addr��endp_size�� */
+    if_cls = ((PXUSB_CFG_DESCR_LONG)Com_Buffer)->itf_descr.bInterfaceClass; // �ӿ������?
     if(dv_cls == 0x00 && if_cls == USB_DEV_CLASS_STORAGE)                   // ��USB�洢���豸,������ȷ����U��
     {
         AnalyzeBulkEndp(Com_Buffer, HubPortIndex);
@@ -415,7 +415,7 @@ uint8_t InitDevOnHub(uint8_t HubPortIndex)
     else if((dv_cls == 0x00) && (if_cls == USB_DEV_CLASS_HID) && (((PXUSB_CFG_DESCR_LONG)Com_Buffer)->itf_descr.bInterfaceSubClass <= 0x01)) // ��HID���豸,����/����
     {
         ifc = ((PXUSB_CFG_DESCR_LONG)Com_Buffer)->cfg_descr.bNumInterfaces;
-        s = AnalyzeHidIntEndp(Com_Buffer, HubPortIndex); // ���������з�����HID�ж϶˵�ĵ�ַ
+        s = AnalyzeHidIntEndp(Com_Buffer, HubPortIndex); // ���������з�����HID�ж϶˵�ĵ��?
         PRINT("AnalyzeHidIntEndp %02x\n", (uint16_t)s);
         if_cls = ((PXUSB_CFG_DESCR_LONG)Com_Buffer)->itf_descr.bInterfaceProtocol;
         s = CtrlSetUsbConfig(cfg); // ����USB�豸����
@@ -433,7 +433,7 @@ uint8_t InitDevOnHub(uint8_t HubPortIndex)
                     PRINT("\n");
                 }
             }
-            //�豣��˵���Ϣ�Ա����������USB����
+            //�豣��˵����?�Ա����������USB����
             DevOnHubPort[HubPortIndex - 1].DeviceStatus = ROOT_DEV_SUCCESS;
             if(if_cls == 1)
             {
@@ -452,7 +452,7 @@ uint8_t InitDevOnHub(uint8_t HubPortIndex)
             else if(if_cls == 2)
             {
                 DevOnHubPort[HubPortIndex - 1].DeviceType = DEV_TYPE_MOUSE;
-                //Ϊ���Ժ��ѯ���״̬,Ӧ�÷���������,ȡ���ж϶˿ڵĵ�ַ,���ȵ���Ϣ
+                //Ϊ���Ժ���?���״�?,Ӧ�÷���������,ȡ���ж϶˿ڵĵ�ַ,���ȵ���Ϣ
                 if(ifc > 1)
                 {
                     PRINT("USB_DEV_CLASS_HID Ready\n");
@@ -488,7 +488,7 @@ uint8_t InitDevOnHub(uint8_t HubPortIndex)
         s = CtrlSetUsbConfig(cfg); // ����USB�豸����
         if(s == ERR_SUCCESS)
         {
-            //�豣��˵���Ϣ�Ա����������USB����
+            //�豣��˵����?�Ա����������USB����
             DevOnHubPort[HubPortIndex - 1].DeviceStatus = ROOT_DEV_SUCCESS;
             DevOnHubPort[HubPortIndex - 1].DeviceType = dv_cls ? dv_cls : if_cls;
             SetUsbSpeed(1);       // Ĭ��Ϊȫ��
@@ -547,7 +547,7 @@ uint8_t EnumHubPort()
                 return (s); // �����Ǹ�HUB�Ͽ���
             }
             PRINT("Reset port and then wait in\n");
-            do // ��ѯ��λ�˿�,ֱ����λ���,����ɺ��״̬��ʾ����
+            do // ��ѯ��λ�˿�,ֱ����λ���?,����ɺ��״̬��ʾ����
             {
                 mDelaymS(1);
                 s = HubGetPortStatus(i);
@@ -555,11 +555,11 @@ uint8_t EnumHubPort()
                 {
                     return (s); // �����Ǹ�HUB�Ͽ���
                 }
-            } while(Com_Buffer[0] & (1 << (HUB_PORT_RESET & 0x07))); // �˿����ڸ�λ��ȴ�
+            } while(Com_Buffer[0] & (1 << (HUB_PORT_RESET & 0x07))); // �˿����ڸ�λ��ȴ�?
             mDelaymS(100);
             s = HubClearPortFeature(i, HUB_C_PORT_RESET);      // �����λ��ɱ�־
                                                                //             s = HubSetPortFeature( i, HUB_PORT_ENABLE );                              // ����HUB�˿�
-            s = HubClearPortFeature(i, HUB_C_PORT_CONNECTION); // ������ӻ��Ƴ��仯��־
+            s = HubClearPortFeature(i, HUB_C_PORT_CONNECTION); // ������ӻ��Ƴ���?��־
             if(s != ERR_SUCCESS)
             {
                 return (s);
@@ -587,13 +587,13 @@ uint8_t EnumHubPort()
             s = HubSetPortFeature(i, HUB_PORT_RESET); // �����豸���ӵĶ˿ڸ�λ
             if(s != ERR_SUCCESS)
                 return (s); // �����Ǹ�HUB�Ͽ���
-            do              // ��ѯ��λ�˿�,ֱ����λ���,����ɺ��״̬��ʾ����
+            do              // ��ѯ��λ�˿�,ֱ����λ���?,����ɺ��״̬��ʾ����
             {
                 mDelaymS(1);
                 s = HubGetPortStatus(i);
                 if(s != ERR_SUCCESS)
                     return (s);                                      // �����Ǹ�HUB�Ͽ���
-            } while(Com_Buffer[0] & (1 << (HUB_PORT_RESET & 0x07))); // �˿����ڸ�λ��ȴ�
+            } while(Com_Buffer[0] & (1 << (HUB_PORT_RESET & 0x07))); // �˿����ڸ�λ��ȴ�?
         }
         else if((Com_Buffer[0] & (1 << (HUB_PORT_CONNECTION & 0x07))) == 0) // �豸�Ѿ��Ͽ�
         {
@@ -604,7 +604,7 @@ uint8_t EnumHubPort()
             DevOnHubPort[i - 1].DeviceStatus = ROOT_DEV_DISCONNECT; // ���豸����
             if(Com_Buffer[2] & (1 << (HUB_C_PORT_CONNECTION & 0x07)))
             {
-                HubClearPortFeature(i, HUB_C_PORT_CONNECTION); // ����Ƴ��仯��־
+                HubClearPortFeature(i, HUB_C_PORT_CONNECTION); // ����Ƴ���?��־
             }
         }
     }
@@ -638,12 +638,12 @@ uint8_t EnumAllHubPort(void)
 /*********************************************************************
  * @fn      SearchTypeDevice
  *
- * @brief   ��ROOT-HUB�Լ��ⲿHUB���˿�������ָ�����͵��豸���ڵĶ˿ں�,����˿ں�Ϊ0xFFFF��δ������.
- *          ��ȻҲ���Ը���USB�ĳ���VID��ƷPID��������(����Ҫ��¼���豸��VID��PID),�Լ�ָ���������
+ * @brief   ��ROOT-HUB�Լ��ⲿHUB���˿�������ָ�����͵��豸���ڵĶ˿ں�,����˿ں��?0xFFFF��δ������.
+ *          ��ȻҲ���Ը���USB�ĳ���VID��ƷPID��������(����Ҫ��¼���豸��VID��PID),�Լ�ָ���������?
  *
  * @param   type    - �������豸����
  *
- * @return  �����8λΪROOT-HUB�˿ں�,��8λΪ�ⲿHUB�Ķ˿ں�,��8λΪ0���豸ֱ����ROOT-HUB�˿���
+ * @return  �����?8λΪROOT-HUB�˿ں�,��8λΪ�ⲿHUB�Ķ˿ں�,��8λΪ0���豸ֱ����ROOT-HUB�˿���
  */
 uint16_t SearchTypeDevice(uint8_t type)
 {
@@ -672,9 +672,9 @@ uint16_t SearchTypeDevice(uint8_t type)
 /*********************************************************************
  * @fn      SETorOFFNumLock
  *
- * @brief   NumLock�ĵ���ж�
+ * @brief   NumLock�ĵ���ж�?
  *
- * @param   buf     - ��Ƽ�ֵ
+ * @param   buf     - ��Ƽ��?
  *
  * @return  ������
  */
