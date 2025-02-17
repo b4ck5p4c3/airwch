@@ -20,6 +20,6 @@ jobs:
         run: cmake --build .
       - uses: actions/upload-artifact@v4
         with:
-          name: firmware
+          name: firmware.bin
           path: firmware.elf.bin
           if-no-files-found: error
