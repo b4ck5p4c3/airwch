@@ -13,9 +13,9 @@ jobs:
       - name: Install XPM
         run: npm install --global xpm@latest
       - name: Init XPM and install RISC-V toolchain
-        run: xpm init && xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest && echo "RISCV_TOOLCHAIN_PATH=~/.xpacks/bin" >> $GITHUB_ENV
+        run: xpm init && xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest
       - name: Generate build files
-        run: cmake .
+        run: RISCV_TOOLCHAIN_PATH=~/.xpacks/bin cmake .
       - name: Build firmware
         run: cmake --build .
       - uses: actions/upload-artifact@v4
