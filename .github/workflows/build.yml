@@ -1,0 +1,25 @@
+name: build
+on: [push]
+jobs:
+  check-bats-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install CMake and build tools
+        run: apt update -y && apt install -y build-essential cmake
+      - name: Install XPM
+        run: npm install --global xpm@latest
+      - name: Init XPM and install RISC-V toolchain
+        run: xpm init && xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest && echo "RISCV_TOOLCHAIN_PATH=~/.xpacks/bin" >> $GITHUB_ENV
+      - name: Generate build files
+        run: cmake .
+      - name: Build firmware
+        run: cmake --build .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: firmware.elf.bin
+          if-no-files-found: error

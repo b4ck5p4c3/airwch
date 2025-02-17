@@ -1,10 +1,14 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR RISC-V)
 
-set(CROSSTOOL_PATH ~/wch/xpack-riscv-none-elf-gcc-12.2.0-1/bin CACHE INTERNAL "Toolchain path")
+if (NOT DEFINED $ENV{RISCV_TOOLCHAIN_PATH})
+  message(WARNING "Failed to find RISC-V toolchain, have you set RISCV_TOOLCHAIN_PATH env var?")
+endif ()
+
+set(CROSSTOOL_PATH $ENV{RISCV_TOOLCHAIN_PATH} CACHE INTERNAL "Toolchain path")
 
 function(find_toolchain)
-  foreach(CROSS_PREFIX ${ARGV})
+  foreach (CROSS_PREFIX ${ARGV})
     find_program(CROSS_CC "${CROSS_PREFIX}gcc" "${CROSSTOOL_PATH}")
     find_program(CROSS_CXX "${CROSS_PREFIX}g++" "${CROSSTOOL_PATH}")
     find_program(CROSS_OBJDUMP "${CROSS_PREFIX}objdump" "${CROSSTOOL_PATH}")
@@ -14,8 +18,8 @@ function(find_toolchain)
       set(CMAKE_C_COMPILER ${CROSS_CC} PARENT_SCOPE)
       set(CMAKE_CXX_COMPILER ${CROSS_CXX} PARENT_SCOPE)
       return()
-    endif()
-  endforeach()
+    endif ()
+  endforeach ()
 endfunction()
 
 find_toolchain("riscv-none-elf-")
@@ -48,11 +52,11 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 set(default_build_type "Debug")
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
   set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
-      STRING "Choose the type of build." FORCE)
+          STRING "Choose the type of build." FORCE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
+          "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif ()
