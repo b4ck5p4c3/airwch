@@ -3,7 +3,7 @@
 
 __attribute__((aligned(4))) uint32_t mem_buffer[BLE_MEMHEAP_SIZE / 4];
 
-#define DEFAULT_ADVERTISING_INTERVAL 2000
+#define DEFAULT_ADVERTISING_INTERVAL 16000
 
 const uint8_t kMacAddress[6] = {0x42, 0x11, 0x72, 0x1a, 0x8b, 0x3f};
 
