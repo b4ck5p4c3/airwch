@@ -1,7 +1,7 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR RISC-V)
 
-if (NOT DEFINED $ENV{RISCV_TOOLCHAIN_PATH})
+if (NOT DEFINED ENV{RISCV_TOOLCHAIN_PATH})
   message(WARNING "Failed to find RISC-V toolchain, have you set RISCV_TOOLCHAIN_PATH env var?")
 endif ()
 
