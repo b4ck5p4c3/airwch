@@ -19,8 +19,11 @@ jobs:
         with:
           name: firmware
 
+      - name: Display structure of downloaded files
+        run: ls -R
+
       - name: Rename firmware binary for release
-        run: mv firmware-*.bin firmware-${{ github.event.release.tag_name }}.bin
+        run: mv firmware/firmware-*.bin firmware-${{ github.event.release.tag_name }}.bin
 
       - name: Upload firmware to GitHub Release
         uses: softprops/action-gh-release@v2
