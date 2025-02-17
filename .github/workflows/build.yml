@@ -15,7 +15,7 @@ jobs:
       - name: Init XPM and install RISC-V toolchain
         run: xpm init && xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest
       - name: Generate build files
-        run: RISCV_TOOLCHAIN_PATH=$PWD/.xpacks/bin cmake .
+        run: ls -la $PWD/.xpacks/bin && RISCV_TOOLCHAIN_PATH=$PWD/.xpacks/bin cmake .
       - name: Build firmware
         run: cmake --build .
       - uses: actions/upload-artifact@v4
