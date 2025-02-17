@@ -9,7 +9,7 @@ jobs:
         with:
           node-version: '20'
       - name: Install CMake and build tools
-        run: apt update -y && apt install -y build-essential cmake
+        run: sudo apt update -y && sudo apt install -y build-essential cmake
       - name: Install XPM
         run: npm install --global xpm@latest
       - name: Init XPM and install RISC-V toolchain
