@@ -1,25 +1,37 @@
-name: build
-on: [push]
+name: Build Firmware
+
+on:
+  push:
+  workflow_call:
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - name: Install CMake and build tools
         run: sudo apt update -y && sudo apt install -y build-essential cmake
+
       - name: Install XPM
         run: npm install --global xpm@latest
+
       - name: Init XPM and install RISC-V toolchain
         run: xpm init && xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest
+
       - name: Generate build files
         run: RISCV_TOOLCHAIN_PATH=$PWD/xpacks/.bin cmake .
+
       - name: Build firmware
         run: cmake --build .
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: firmware.bin
+          name: firmware
           path: firmware.elf.bin
           if-no-files-found: error
