@@ -15,16 +15,12 @@
 extern "C" {
 #endif
 
-/**
- * @brief   ¶ÁÈ¡Flash-ROM
- *
- * @param   StartAddr   - read address
- * @param   Buffer      - read buffer
- * @param   len         - read len
- */
+#include "core_riscv.h"
+#include <stdint.h>
+
 void FLASH_ROM_READ(uint32_t StartAddr, void *Buffer, uint32_t len);
 
-void FLASH_ROM_READ(UINT32 StartAddr, PVOID Buffer, UINT32 len); /* ¶ÁÈ¡Flash-ROM */
+void FLASH_ROM_READ(UINT32 StartAddr, PVOID Buffer, UINT32 len); /* ï¿½ï¿½È¡Flash-ROM */
 
 UINT8 UserOptionByteConfig(FunctionalState RESET_EN, FunctionalState BOOT_PIN, FunctionalState UART_NO_KEY_EN,
                            UINT32 FLASHProt_Size);

@@ -1,6 +1,5 @@
-/********************************** (C) COPYRIGHT *******************************
- * File Name          : SLEEP.h
- * Author             : WCH
+/********************************** (C) COPYRIGHT
+ ******************************** File Name          : SLEEP.h Author : WCH
  * Version            : V1.0
  * Date               : 2018/11/12
  * Description        :
@@ -16,6 +15,8 @@
 extern "C" {
 #endif
 
+#include "config.h"
+
 /*********************************************************************
  * GLOBAL VARIABLES
  */
@@ -24,18 +25,8 @@ extern "C" {
  * FUNCTIONS
  */
 
-/**
- * @brief   配置睡眠唤醒的方式   - RTC唤醒，触发模式
- */
 extern void HAL_SleepInit(void);
 
-/**
- * @brief   启动睡眠
- *
- * @param   time    - 唤醒的时间点（RTC绝对值）
- *
- * @return  state.
- */
 extern uint32_t CH58X_LowPower(uint32_t time);
 
 /*********************************************************************
