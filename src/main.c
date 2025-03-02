@@ -69,6 +69,7 @@ int main() {
 
   int sender_task_id = TMOS_ProcessEventRegister(SenderTaskCallback);
 
+  tmos_set_event(sender_task_id, SBP_SEND_PACKETS_EVT);
   tmos_start_reload_task(sender_task_id, SBP_SEND_PACKETS_EVT,
                          SEND_PACKETS_PERIOD * 8 / 5);
 
